@@ -1,26 +1,44 @@
-import { Injectable } from '@nestjs/common';
-import { CreateBlogDto } from './dto/create-blog.dto';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { BlogsRepository } from './blogs.repository';
+import { Blog, BlogDocument, type BlogModelType } from './entities/blog.entity';
 import { UpdateBlogDto } from './dto/update-blog.dto';
+import { CreateBlogDto } from './dto/create-blog.dto';
+import { InjectModel } from '@nestjs/mongoose';
 
 @Injectable()
 export class BlogsService {
-  create(createBlogDto: CreateBlogDto) {
-    return 'This action adds a new blog';
+  constructor(
+    @InjectModel(Blog.name) private blogModel: BlogModelType,
+    private readonly blogsRepository: BlogsRepository,
+  ) {}
+
+  async createBlog(dto: CreateBlogDto): Promise<string> {
+    const newBlog: BlogDocument = this.blogModel.createInstance(dto);
+
+    const blogId: string = await this.blogsRepository.createBlog(newBlog);
+
+    if (!blogId) {
+      throw new BadRequestException('Failed to create blog');
+    }
+
+    return blogId;
   }
 
-  findAll() {
-    return `This action returns all blogs`;
+  async updateBlog(id: string, dto: UpdateBlogDto) {
+    const isBlog: BlogDocument | null =
+      await this.blogsRepository.getBlogById(id);
+
+    isBlog.name = dto.name;
+    isBlog.description = dto.description;
+    isBlog.websiteUrl = dto.websiteUrl;
+
+    await this.blogsRepository.updateBlog(isBlog);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} blog`;
-  }
+  async removeBlogById(id: string) {
+    const isBlog: BlogDocument | null =
+      await this.blogsRepository.getBlogById(id);
 
-  update(id: number, updateBlogDto: UpdateBlogDto) {
-    return `This action updates a #${id} blog`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} blog`;
+    await this.blogsRepository.removeBlogById(isBlog);
   }
 }
