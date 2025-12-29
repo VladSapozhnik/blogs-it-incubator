@@ -14,9 +14,9 @@ import { BlogsService } from './blogs.service';
 import { CreateBlogDto } from './dto/create-blog.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';
 import { BlogsQueryRepository } from './blogs.query.repository';
-import { GetBlogsQueryParams } from './input/blog-query-input';
+import { GetBlogsQueryParamsDto } from './dto/blog-query-input.dto';
 import { BlogsMapper } from './mappers/blogs.mapper';
-import { PaginatedViewDto } from '../../core/dto/base.paginated.view-dto';
+import { PaginatedViewDto } from '../../core/dto/base.paginated.view.dto';
 
 @Controller('blogs')
 export class BlogsController {
@@ -33,7 +33,7 @@ export class BlogsController {
 
   @Get()
   findAll(
-    @Query() query: GetBlogsQueryParams,
+    @Query() query: GetBlogsQueryParamsDto,
   ): Promise<PaginatedViewDto<BlogsMapper[]>> {
     return this.blogsQueryRepository.getBlogs(query);
   }

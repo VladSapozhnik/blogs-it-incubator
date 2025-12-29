@@ -13,6 +13,7 @@ export class Blog {
   @Prop({ required: true, default: false })
   isMembership: boolean;
   createdAt: Date;
+  updatedAt: Date;
 
   static createInstance(dto: CreateBlogDto): BlogDocument {
     const blog = new this();
