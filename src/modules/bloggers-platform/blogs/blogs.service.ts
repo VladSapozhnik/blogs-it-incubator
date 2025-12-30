@@ -25,8 +25,7 @@ export class BlogsService {
   }
 
   async updateBlog(id: string, dto: UpdateBlogDto) {
-    const isBlog: BlogDocument | null =
-      await this.blogsRepository.getBlogById(id);
+    const isBlog: BlogDocument = await this.blogsRepository.getBlogById(id);
 
     isBlog.name = dto.name;
     isBlog.description = dto.description;
@@ -36,8 +35,7 @@ export class BlogsService {
   }
 
   async removeBlogById(id: string) {
-    const isBlog: BlogDocument | null =
-      await this.blogsRepository.getBlogById(id);
+    const isBlog: BlogDocument = await this.blogsRepository.getBlogById(id);
 
     await this.blogsRepository.removeBlogById(isBlog);
   }

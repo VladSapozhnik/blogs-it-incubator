@@ -1,27 +1,34 @@
-import { CreatePostDto } from './dto/create-post.dto';
-import { BlogDocument } from '../blogs/entities/blog.entity';
-import { Post, PostDocument, type PostModelType } from './entities/post.entity';
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { Post, PostDocument, type PostModelType } from './entities/post.entity';
+import { BlogDocument } from '../blogs/entities/blog.entity';
+import { PostsExternalRepository } from './posts.external.repository';
 import { InjectModel } from '@nestjs/mongoose';
-import { PostsRepository } from './posts.repository';
 import { BlogsExternalRepository } from '../blogs/blogs.external.repository';
+import { CreatePostForBlogDto } from './dto/create-post-for-blog.dto';
 
 @Injectable()
 export class PostsExternalService {
   constructor(
     @InjectModel(Post.name) private readonly PostModel: PostModelType,
-    private readonly postsRepository: PostsRepository,
+    private readonly postsExternalRepository: PostsExternalRepository,
     private readonly blogsExternalRepository: BlogsExternalRepository,
   ) {}
 
-  async createPostForBlog(dto: CreatePostDto): Promise<string> {
-    const blog: BlogDocument = await this.blogsExternalRepository.getBlogById(
-      dto.blogId.toString(),
+  async createPostForBlog(
+    dto: CreatePostForBlogDto,
+    blogId: string,
+  ): Promise<string> {
+    const blog: BlogDocument =
+      await this.blogsExternalRepository.getBlogById(blogId);
+
+    const newPost: PostDocument = this.PostModel.createInstancePostForBlog(
+      dto,
+      blog.name,
+      blogId,
     );
 
-    const newPost: PostDocument = this.PostModel.createInstance(dto, blog.name);
-
-    const postId: string = await this.postsRepository.createPost(newPost);
+    const postId: string =
+      await this.postsExternalRepository.createPost(newPost);
 
     if (!postId) {
       throw new BadRequestException('Failed to create Post');

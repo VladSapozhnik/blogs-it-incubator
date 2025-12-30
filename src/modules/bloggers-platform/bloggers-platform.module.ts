@@ -3,7 +3,6 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Blog, BlogSchema } from './blogs/entities/blog.entity';
 import { BlogsController } from './blogs/blogs.controller';
 import { PostsController } from './posts/posts.controller';
-import { CommentsController } from './comments/comments.controller';
 import { Post, PostSchema } from './posts/entities/post.entity';
 import { Like, LikeSchema } from './likes/entities/like.entity';
 import { BlogsService } from './blogs/blogs.service';
@@ -19,6 +18,9 @@ import { LikesService } from './likes/likes.service';
 import { LikesQueryExternalService } from './likes/likes.query.external.service';
 import { LikesQueryExternalRepository } from './likes/likes.query.external.repository';
 import { LikesController } from './likes/likes.controller';
+import { PostsQueryExternalRepository } from './posts/posts.query.external.repository';
+import { PostsQueryExternalService } from './posts/posts.query.external.service';
+import { PostsExternalRepository } from './posts/posts.external.repository';
 
 @Module({
   imports: [
@@ -35,10 +37,14 @@ import { LikesController } from './likes/likes.controller';
     BlogsQueryRepository,
     BlogsExternalRepository,
     PostsService,
+    PostsExternalService,
     PostsQueryService,
     PostsExternalService,
+    PostsQueryExternalService,
     PostsRepository,
+    PostsExternalRepository,
     PostsQueryRepository,
+    PostsQueryExternalRepository,
     LikesService,
     LikesQueryExternalService,
     LikesQueryExternalRepository,
