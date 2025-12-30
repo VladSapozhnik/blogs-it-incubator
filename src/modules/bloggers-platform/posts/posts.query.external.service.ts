@@ -42,17 +42,13 @@ export class PostsQueryExternalService {
     });
   }
 
-  // async getPostById(id: string, userId: string | null): Promise<PostsMapper> {
-  //   const likesInfo: ExtendedLikesInfoType =
-  //     await this.likesQueryExternalService.likesInfoForPosts(id, userId);
-  //
-  //   const post: PostDocument | null =
-  //     await this.postsQueryRepository.getPostById(id);
-  //
-  //   if (!post) {
-  //     throw new NotFoundException(`Post with id ${id} not found`);
-  //   }
-  //
-  //   return PostsMapper.mapToView(post, likesInfo);
-  // }
+  async getPostById(id: string, userId: string | null): Promise<PostsMapper> {
+    const likesInfo: ExtendedLikesInfoType =
+      await this.likesQueryExternalService.likesInfoForPosts(id, userId);
+
+    const post: PostDocument =
+      await this.postsQueryExternalRepository.getPostById(id);
+
+    return PostsMapper.mapToView(post, likesInfo);
+  }
 }

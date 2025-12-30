@@ -57,13 +57,13 @@ export class BlogsController {
   async createPostForBlog(
     @Param('blogId') blogId: string,
     @Body() createBlogDto: CreatePostForBlogDto,
-  ): Promise<BlogsMapper> {
+  ): Promise<PostsMapper> {
     const id: string = await this.postsExternalService.createPostForBlog(
       createBlogDto,
       blogId,
     );
 
-    return this.blogsQueryRepository.getBlogById(id);
+    return this.postsQueryExternalService.getPostById(id, null);
   }
 
   @Get(':id')

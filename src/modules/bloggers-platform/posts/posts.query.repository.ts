@@ -1,7 +1,7 @@
 import { InjectModel } from '@nestjs/mongoose';
 import { Post, PostDocument, type PostModelType } from './entities/post.entity';
 import { GetPostsQueryParamsDto } from './dto/post-query-input.dto';
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Types } from 'mongoose';
 
 @Injectable()
@@ -24,9 +24,15 @@ export class PostsQueryRepository {
     };
   }
 
-  async getPostById(id: string): Promise<PostDocument | null> {
-    return this.PostModel.findOne({
+  async getPostById(id: string): Promise<PostDocument> {
+    const existPost = await this.PostModel.findOne({
       _id: new Types.ObjectId(id),
     });
+
+    if (!existPost) {
+      throw new NotFoundException(`Post with id ${id} not found`);
+    }
+
+    return existPost;
   }
 }

@@ -45,12 +45,7 @@ export class PostsQueryService {
     const likesInfo: ExtendedLikesInfoType =
       await this.likesQueryExternalService.likesInfoForPosts(id, userId);
 
-    const post: PostDocument | null =
-      await this.postsQueryRepository.getPostById(id);
-
-    if (!post) {
-      throw new NotFoundException(`Post with id ${id} not found`);
-    }
+    const post: PostDocument = await this.postsQueryRepository.getPostById(id);
 
     return PostsMapper.mapToView(post, likesInfo);
   }
