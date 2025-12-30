@@ -3,11 +3,13 @@ import { AppController } from './app.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserAccountsModule } from './modules/user-accounts/user-accounts.module';
 import { BloggersPlatformModule } from './modules/bloggers-platform/bloggers-platform.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot(),
     MongooseModule.forRoot(
-      'mongodb+srv://vladbars2:vlad34299@cluster0.jgd7edn.mongodb.net/',
+      process.env.MONGODB_URI || 'mongodb://localhost:27017',
       { dbName: 'blog-nest-it-incubator' },
     ),
     BloggersPlatformModule,
