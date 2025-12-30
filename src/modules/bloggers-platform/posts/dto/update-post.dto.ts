@@ -1,4 +1,8 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreatePostDto } from './create-post.dto';
+import { Types } from 'mongoose';
 
-export class UpdatePostDto extends PartialType(CreatePostDto) {}
+export class UpdatePostDto {
+  title: string;
+  shortDescription: string;
+  content: string;
+  blogId: Types.ObjectId;
+}

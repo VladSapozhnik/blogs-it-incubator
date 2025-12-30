@@ -8,12 +8,12 @@ import { InjectModel } from '@nestjs/mongoose';
 @Injectable()
 export class BlogsService {
   constructor(
-    @InjectModel(Blog.name) private blogModel: BlogModelType,
+    @InjectModel(Blog.name) private BlogModel: BlogModelType,
     private readonly blogsRepository: BlogsRepository,
   ) {}
 
   async createBlog(dto: CreateBlogDto): Promise<string> {
-    const newBlog: BlogDocument = this.blogModel.createInstance(dto);
+    const newBlog: BlogDocument = this.BlogModel.createInstance(dto);
 
     const blogId: string = await this.blogsRepository.createBlog(newBlog);
 

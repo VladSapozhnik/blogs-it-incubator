@@ -2,25 +2,48 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Blog, BlogSchema } from './blogs/entities/blog.entity';
 import { BlogsController } from './blogs/blogs.controller';
+import { PostsController } from './posts/posts.controller';
+import { CommentsController } from './comments/comments.controller';
+import { Post, PostSchema } from './posts/entities/post.entity';
+import { Like, LikeSchema } from './likes/entities/like.entity';
 import { BlogsService } from './blogs/blogs.service';
 import { BlogsRepository } from './blogs/blogs.repository';
 import { BlogsQueryRepository } from './blogs/blogs.query.repository';
-import { PostsController } from './posts/posts.controller';
-import { CommentsController } from './comments/comments.controller';
+import { BlogsExternalRepository } from './blogs/blogs.external.repository';
 import { PostsService } from './posts/posts.service';
-import { CommentsService } from './comments/comments.service';
+import { PostsQueryService } from './posts/posts.query.service';
+import { PostsExternalService } from './posts/posts.external.service';
+import { PostsRepository } from './posts/posts.repository';
+import { PostsQueryRepository } from './posts/posts.query.repository';
+import { LikesService } from './likes/likes.service';
+import { LikesQueryExternalService } from './likes/likes.query.external.service';
+import { LikesQueryExternalRepository } from './likes/likes.query.external.repository';
+import { LikesController } from './likes/likes.controller';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: Blog.name, schema: BlogSchema }]),
+    MongooseModule.forFeature([
+      { name: Blog.name, schema: BlogSchema },
+      { name: Post.name, schema: PostSchema },
+      { name: Like.name, schema: LikeSchema },
+    ]),
   ],
-  controllers: [BlogsController, PostsController, CommentsController],
+  controllers: [BlogsController, PostsController, LikesController],
   providers: [
     BlogsService,
     BlogsRepository,
     BlogsQueryRepository,
+    BlogsExternalRepository,
     PostsService,
-    CommentsService,
+    PostsQueryService,
+    PostsExternalService,
+    PostsRepository,
+    PostsQueryRepository,
+    LikesService,
+    LikesQueryExternalService,
+    LikesQueryExternalRepository,
+    // LikesRepository,
+    // CommentsService,
   ],
 })
 export class BloggersPlatformModule {}
