@@ -2,7 +2,6 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Blog, BlogDocument, type BlogModelType } from './entities/blog.entity';
 import { PaginatedViewDto } from '../../core/dto/base.paginated.view.dto';
-// import { SkipOffset } from '../../core/helpers/skip.offset';
 import { GetBlogsQueryParamsDto } from './dto/blog-query-input.dto';
 import { BlogsMapper } from './mappers/blogs.mapper';
 
@@ -12,11 +11,6 @@ export class BlogsQueryRepository {
     @InjectModel(Blog.name) private readonly blogModel: BlogModelType,
   ) {}
   async getBlogs(queryDto: GetBlogsQueryParamsDto) {
-    // const skip: number = SkipOffset.getSkip(
-    //   queryDto.pageNumber,
-    //   queryDto.pageSize,
-    // );
-    //
     const filter: Record<string, any> = {};
 
     if (queryDto.searchNameTerm) {
@@ -32,14 +26,6 @@ export class BlogsQueryRepository {
     const totalCount: number = await this.blogModel.countDocuments(filter);
 
     const items: BlogsMapper[] = blogs.map(BlogsMapper.mapToView);
-
-    // const pagination: PaginatedMetaType = buildPaginationHelper(
-    //   totalCount,
-    //   queryDto.pageNumber,
-    //   queryDto.pageSize,
-    // );
-    //
-    // return paginatedListMapper(items, pagination, blogMapper);
 
     return PaginatedViewDto.mapToView({
       items,

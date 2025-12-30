@@ -1,34 +1,45 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Query,
+  Delete,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { UsersQueryRepository } from './users.query.repository';
+import { GetUsersQueryParamsDto } from './dto/users-query-input.dto';
+import { PaginatedViewDto } from '../../core/dto/base.paginated.view.dto';
+import { UsersMapper } from './mappers/users.mapper';
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly usersQueryRepository: UsersQueryRepository,
+  ) {}
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+  async create(@Body() createUserDto: CreateUserDto) {
+    const id: string = await this.usersService.createUser(createUserDto);
+
+    return this.usersQueryRepository.getUserById(id);
   }
 
   @Get()
-  findAll() {
-    return this.usersService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
+  findAll(
+    @Query() query: GetUsersQueryParamsDto,
+  ): Promise<PaginatedViewDto<UsersMapper[]>> {
+    return this.usersQueryRepository.getAllUsers(query);
   }
 
   @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
+    return this.usersService.removeUser(id);
   }
 }
