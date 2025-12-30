@@ -9,7 +9,7 @@ import { ConfigModule } from '@nestjs/config';
   imports: [
     ConfigModule.forRoot(),
     MongooseModule.forRoot(
-      process.env.MONGODB_URI || 'mongodb://localhost:27017',
+      process.env.MONGO_URI || 'mongodb://localhost:27017',
       { dbName: 'blog-nest-it-incubator' },
     ),
     BloggersPlatformModule,
