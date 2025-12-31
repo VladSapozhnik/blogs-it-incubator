@@ -15,11 +15,7 @@ export class BlogsQueryRepository {
     @InjectModel(Blog.name) private readonly blogModel: BlogModelType,
   ) {}
   async getBlogs(queryDto: GetBlogsQueryParamsDto) {
-    const filter: Record<string, any> = {};
-
-    if (queryDto.searchNameTerm) {
-      filter.name = { $regex: queryDto.searchNameTerm, $options: 'i' };
-    }
+    const filter: Record<string, any> = queryDto.buildBlogsFilter();
 
     const blogs: BlogDocument[] = await this.blogModel
       .find(filter)
