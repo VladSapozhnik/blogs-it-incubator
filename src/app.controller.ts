@@ -22,8 +22,8 @@ export class AppController {
     );
     await Promise.all(promises);
 
-    return {
-      status: 'succeeded',
-    };
+    // return {
+    //   status: 'succeeded',
+    // };
   }
 }

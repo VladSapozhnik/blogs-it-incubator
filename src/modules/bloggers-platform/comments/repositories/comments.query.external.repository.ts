@@ -2,11 +2,11 @@ import {
   Comment,
   CommentDocument,
   type CommentModelType,
-} from './entities/comment.entity';
+} from '../entities/comment.entity';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Types } from 'mongoose';
-import { GetCommentQueryParamsDto } from './dto/comment-query-input.dto';
+import { GetCommentQueryParamsDto } from '../dto/comment-query-input.dto';
 
 @Injectable()
 export class CommentsQueryExternalRepository {

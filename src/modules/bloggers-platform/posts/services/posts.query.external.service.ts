@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { GetPostsQueryParamsDto } from './dto/post-query-input.dto';
-import { LikesQueryExternalService } from '../likes/likes.query.external.service';
-import { ExtendedLikesInfoType } from '../likes/mappers/like-info-for-post.mapper';
-import { PostsMapper } from './mappers/blogs.mapper';
-import { PaginatedViewDto } from '../../../core/dto/base.paginated.view.dto';
-import { PostsQueryExternalRepository } from './posts.query.external.repository';
-import { PostDocument } from './entities/post.entity';
-import { BlogsExternalRepository } from '../blogs/blogs.external.repository';
+import { GetPostsQueryParamsDto } from '../dto/post-query-input.dto';
+import { LikesQueryExternalService } from '../../likes/services/likes.query.external.service';
+import { ExtendedLikesInfoType } from '../../likes/mappers/like-info-for-post.mapper';
+import { PostsMapper } from '../mappers/blogs.mapper';
+import { PaginatedViewDto } from '../../../../core/dto/base.paginated.view.dto';
+import { PostsQueryExternalRepository } from '../repositories/posts.query.external.repository';
+import { PostDocument } from '../entities/post.entity';
+import { BlogsExternalRepository } from '../../blogs/repositories/blogs.external.repository';
 
 @Injectable()
 export class PostsQueryExternalService {

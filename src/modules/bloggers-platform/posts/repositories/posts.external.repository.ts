@@ -1,4 +1,4 @@
-import { PostDocument } from './entities/post.entity';
+import { PostDocument } from '../entities/post.entity';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()

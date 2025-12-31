@@ -1,5 +1,5 @@
 import { Controller, Get, Param } from '@nestjs/common';
-import { CommentsQueryService } from './comments.query.service';
+import { CommentsQueryService } from './services/comments.query.service';
 import { CommentsMapper } from './mappers/comments.mapper';
 
 @Controller('comments')

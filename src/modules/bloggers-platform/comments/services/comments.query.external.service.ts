@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { CommentDocument } from './entities/comment.entity';
-import { LikesQueryExternalService } from '../likes/likes.query.external.service';
-import { CommentsMapper } from './mappers/comments.mapper';
-import { LikesInfoOutputType } from '../likes/types/likes-info-output.type';
-import { CommentsQueryExternalRepository } from './comments.query.external.repository';
-import { PaginatedViewDto } from '../../../core/dto/base.paginated.view.dto';
-import { GetCommentQueryParamsDto } from './dto/comment-query-input.dto';
+import { CommentDocument } from '../entities/comment.entity';
+import { LikesQueryExternalService } from '../../likes/services/likes.query.external.service';
+import { CommentsMapper } from '../mappers/comments.mapper';
+import { LikesInfoOutputType } from '../../likes/types/likes-info-output.type';
+import { CommentsQueryExternalRepository } from '../repositories/comments.query.external.repository';
+import { PaginatedViewDto } from '../../../../core/dto/base.paginated.view.dto';
+import { GetCommentQueryParamsDto } from '../dto/comment-query-input.dto';
 
 @Injectable()
 export class CommentsQueryExternalService {

@@ -1,8 +1,12 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { BlogsRepository } from './blogs.repository';
-import { Blog, BlogDocument, type BlogModelType } from './entities/blog.entity';
-import { UpdateBlogDto } from './dto/update-blog.dto';
-import { CreateBlogDto } from './dto/create-blog.dto';
+import { BlogsRepository } from '../repositories/blogs.repository';
+import {
+  Blog,
+  BlogDocument,
+  type BlogModelType,
+} from '../entities/blog.entity';
+import { UpdateBlogDto } from '../dto/update-blog.dto';
+import { CreateBlogDto } from '../dto/create-blog.dto';
 import { InjectModel } from '@nestjs/mongoose';
 
 @Injectable()
@@ -27,9 +31,7 @@ export class BlogsService {
   async updateBlog(id: string, dto: UpdateBlogDto) {
     const isBlog: BlogDocument = await this.blogsRepository.getBlogById(id);
 
-    isBlog.name = dto.name;
-    isBlog.description = dto.description;
-    isBlog.websiteUrl = dto.websiteUrl;
+    isBlog.updateBlog(dto);
 
     await this.blogsRepository.updateBlog(isBlog);
   }

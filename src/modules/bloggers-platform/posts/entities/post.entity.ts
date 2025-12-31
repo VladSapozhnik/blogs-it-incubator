@@ -2,6 +2,7 @@ import { HydratedDocument, Model, Types } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { CreatePostDto } from '../dto/create-post.dto';
 import { CreatePostForBlogDto } from '../dto/create-post-for-blog.dto';
+import { UpdatePostDto } from '../dto/update-post.dto';
 
 @Schema({ timestamps: true })
 export class Post {
@@ -44,6 +45,13 @@ export class Post {
     post.blogName = blogName;
 
     return post as PostDocument;
+  }
+
+  updatePost(dto: UpdatePostDto, blogName: string) {
+    this.title = dto.title;
+    this.shortDescription = dto.shortDescription;
+    this.content = dto.content;
+    this.blogName = blogName;
   }
 }
 

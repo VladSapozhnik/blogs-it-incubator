@@ -9,9 +9,9 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
-import { UsersService } from './users.service';
+import { UsersService } from './services/users.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UsersQueryRepository } from './users.query.repository';
+import { UsersQueryRepository } from './repositories/users.query.repository';
 import { GetUsersQueryParamsDto } from './dto/users-query-input.dto';
 import { UsersMapper } from './mappers/users.mapper';
 import { PaginatedViewDto } from '../../../core/dto/base.paginated.view.dto';

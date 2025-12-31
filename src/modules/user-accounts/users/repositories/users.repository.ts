@@ -3,7 +3,11 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { User, UserDocument, type UserModelType } from './entities/user.entity';
+import {
+  User,
+  UserDocument,
+  type UserModelType,
+} from '../entities/user.entity';
 import { InjectModel } from '@nestjs/mongoose';
 
 @Injectable()

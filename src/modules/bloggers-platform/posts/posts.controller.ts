@@ -10,15 +10,15 @@ import {
   HttpStatus,
   Query,
 } from '@nestjs/common';
-import { PostsService } from './posts.service';
+import { PostsService } from './services/posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PostsMapper } from './mappers/blogs.mapper';
-import { PostsQueryService } from './posts.query.service';
+import { PostsQueryService } from './services/posts.query.service';
 import { GetPostsQueryParamsDto } from './dto/post-query-input.dto';
 import { PaginatedViewDto } from '../../../core/dto/base.paginated.view.dto';
 import { GetCommentQueryParamsDto } from '../comments/dto/comment-query-input.dto';
-import { CommentsQueryExternalService } from '../comments/comments.query.external.service';
+import { CommentsQueryExternalService } from '../comments/services/comments.query.external.service';
 import { CommentsMapper } from '../comments/mappers/comments.mapper';
 
 @Controller('posts')

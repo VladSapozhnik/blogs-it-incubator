@@ -1,9 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Blog, BlogDocument, type BlogModelType } from './entities/blog.entity';
-import { GetBlogsQueryParamsDto } from './dto/blog-query-input.dto';
-import { BlogsMapper } from './mappers/blogs.mapper';
-import { PaginatedViewDto } from '../../../core/dto/base.paginated.view.dto';
+import {
+  Blog,
+  BlogDocument,
+  type BlogModelType,
+} from '../entities/blog.entity';
+import { GetBlogsQueryParamsDto } from '../dto/blog-query-input.dto';
+import { BlogsMapper } from '../mappers/blogs.mapper';
+import { PaginatedViewDto } from '../../../../core/dto/base.paginated.view.dto';
 
 @Injectable()
 export class BlogsQueryRepository {

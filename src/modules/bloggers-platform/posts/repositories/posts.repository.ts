@@ -1,4 +1,8 @@
-import { Post, PostDocument, type PostModelType } from './entities/post.entity';
+import {
+  Post,
+  PostDocument,
+  type PostModelType,
+} from '../entities/post.entity';
 import { InjectModel } from '@nestjs/mongoose';
 import { DeleteResult } from 'mongoose';
 import { Injectable, NotFoundException } from '@nestjs/common';

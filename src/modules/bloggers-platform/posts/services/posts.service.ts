@@ -3,12 +3,16 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { CreatePostDto } from './dto/create-post.dto';
-import { UpdatePostDto } from './dto/update-post.dto';
-import { BlogDocument } from '../blogs/entities/blog.entity';
-import { PostsRepository } from './posts.repository';
-import { Post, PostDocument, type PostModelType } from './entities/post.entity';
-import { BlogsExternalRepository } from '../blogs/blogs.external.repository';
+import { CreatePostDto } from '../dto/create-post.dto';
+import { UpdatePostDto } from '../dto/update-post.dto';
+import { BlogDocument } from '../../blogs/entities/blog.entity';
+import { PostsRepository } from '../repositories/posts.repository';
+import {
+  Post,
+  PostDocument,
+  type PostModelType,
+} from '../entities/post.entity';
+import { BlogsExternalRepository } from '../../blogs/repositories/blogs.external.repository';
 import { InjectModel } from '@nestjs/mongoose';
 
 @Injectable()
@@ -35,19 +39,16 @@ export class PostsService {
     return postId;
   }
 
-  async updatePost(id: string, body: UpdatePostDto) {
+  async updatePost(id: string, dto: UpdatePostDto) {
     const blog: BlogDocument = await this.blogsExternalRepository.getBlogById(
-      body.blogId.toString(),
+      dto.blogId.toString(),
     );
 
     const existPost: PostDocument = await this.postsRepository.findPostById(
       id.toString(),
     );
 
-    existPost.title = body.title;
-    existPost.shortDescription = body.shortDescription;
-    existPost.content = body.content;
-    existPost.blogName = blog.name;
+    existPost.updatePost(dto, blog.name);
 
     await this.postsRepository.updatePost(existPost);
   }

@@ -1,4 +1,8 @@
-import { Blog, BlogDocument, type BlogModelType } from './entities/blog.entity';
+import {
+  Blog,
+  BlogDocument,
+  type BlogModelType,
+} from '../entities/blog.entity';
 import { InjectModel } from '@nestjs/mongoose';
 import { Injectable, NotFoundException } from '@nestjs/common';
 

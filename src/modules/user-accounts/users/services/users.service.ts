@@ -1,7 +1,11 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UsersRepository } from './users.repository';
-import { User, UserDocument, type UserModelType } from './entities/user.entity';
+import { CreateUserDto } from '../dto/create-user.dto';
+import { UsersRepository } from '../repositories/users.repository';
+import {
+  User,
+  UserDocument,
+  type UserModelType,
+} from '../entities/user.entity';
 import { InjectModel } from '@nestjs/mongoose';
 
 @Injectable()

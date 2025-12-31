@@ -1,8 +1,12 @@
-import { LikeTargetEnum } from './enums/like-target.enum';
+import { LikeTargetEnum } from '../enums/like-target.enum';
 import { InjectModel } from '@nestjs/mongoose';
-import { Like, LikeDocument, type LikeModelType } from './entities/like.entity';
+import {
+  Like,
+  LikeDocument,
+  type LikeModelType,
+} from '../entities/like.entity';
 import { Injectable } from '@nestjs/common';
-import { LikeStatusEnum } from './enums/like-status.enum';
+import { LikeStatusEnum } from '../enums/like-status.enum';
 
 @Injectable()
 export class LikesQueryExternalRepository {

@@ -1,11 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { PostDocument } from './entities/post.entity';
-import { GetPostsQueryParamsDto } from './dto/post-query-input.dto';
-import { PostsQueryRepository } from './posts.query.repository';
-import { LikesQueryExternalService } from '../likes/likes.query.external.service';
-import { ExtendedLikesInfoType } from '../likes/mappers/like-info-for-post.mapper';
-import { PostsMapper } from './mappers/blogs.mapper';
-import { PaginatedViewDto } from '../../../core/dto/base.paginated.view.dto';
+import { Injectable } from '@nestjs/common';
+import { PostDocument } from '../entities/post.entity';
+import { GetPostsQueryParamsDto } from '../dto/post-query-input.dto';
+import { PostsQueryRepository } from '../repositories/posts.query.repository';
+import { LikesQueryExternalService } from '../../likes/services/likes.query.external.service';
+import { ExtendedLikesInfoType } from '../../likes/mappers/like-info-for-post.mapper';
+import { PostsMapper } from '../mappers/blogs.mapper';
+import { PaginatedViewDto } from '../../../../core/dto/base.paginated.view.dto';
 
 @Injectable()
 export class PostsQueryService {

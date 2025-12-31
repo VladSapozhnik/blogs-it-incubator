@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { LikesQueryExternalRepository } from './likes.query.external.repository';
-import { LikeTargetEnum } from './enums/like-target.enum';
-import { LikeStatusEnum } from './enums/like-status.enum';
-import { LikeDocument } from './entities/like.entity';
-import { LikeInfoForPostMapper } from './mappers/like-info-for-post.mapper';
+import { LikesQueryExternalRepository } from '../repositories/likes.query.external.repository';
+import { LikeTargetEnum } from '../enums/like-target.enum';
+import { LikeStatusEnum } from '../enums/like-status.enum';
+import { LikeDocument } from '../entities/like.entity';
+import { LikeInfoForPostMapper } from '../mappers/like-info-for-post.mapper';
 
 @Injectable()
 export class LikesQueryExternalService {

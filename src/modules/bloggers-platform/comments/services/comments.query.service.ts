@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { CommentsQueryRepository } from './comments.query.repository';
-import { CommentDocument } from './entities/comment.entity';
-import { LikesQueryExternalService } from '../likes/likes.query.external.service';
-import { CommentsMapper } from './mappers/comments.mapper';
-import { LikesInfoOutputType } from '../likes/types/likes-info-output.type';
+import { CommentsQueryRepository } from '../repositories/comments.query.repository';
+import { CommentDocument } from '../entities/comment.entity';
+import { LikesQueryExternalService } from '../../likes/services/likes.query.external.service';
+import { CommentsMapper } from '../mappers/comments.mapper';
+import { LikesInfoOutputType } from '../../likes/types/likes-info-output.type';
 
 @Injectable()
 export class CommentsQueryService {

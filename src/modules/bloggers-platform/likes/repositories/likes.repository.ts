@@ -1,9 +1,9 @@
 import { UpdateResult } from 'mongoose';
-import { UserDocument } from '../../user-accounts/users/entities/user.entity';
-import { LikeTargetEnum } from './enums/like-target.enum';
-import { LikeStatusEnum } from './enums/like-status.enum';
+import { UserDocument } from '../../../user-accounts/users/entities/user.entity';
+import { LikeTargetEnum } from '../enums/like-target.enum';
+import { LikeStatusEnum } from '../enums/like-status.enum';
 import { InjectModel } from '@nestjs/mongoose';
-import { Like, type LikeModelType } from './entities/like.entity';
+import { Like, type LikeModelType } from '../entities/like.entity';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
