@@ -50,7 +50,11 @@ export class BlogsController {
     @Param('blogId') blogId: string,
     @Query() query: GetPostsQueryParamsDto,
   ): Promise<PaginatedViewDto<PostsMapper[]>> {
-    return this.postsQueryExternalService.getPosts(query, null, blogId);
+    return this.postsQueryExternalService.getAllPostsForBlog(
+      query,
+      null,
+      blogId,
+    );
   }
 
   @Post(':blogId/posts')

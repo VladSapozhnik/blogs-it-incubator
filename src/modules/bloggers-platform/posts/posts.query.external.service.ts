@@ -6,19 +6,23 @@ import { PostsMapper } from './mappers/blogs.mapper';
 import { PaginatedViewDto } from '../../../core/dto/base.paginated.view.dto';
 import { PostsQueryExternalRepository } from './posts.query.external.repository';
 import { PostDocument } from './entities/post.entity';
+import { BlogsExternalRepository } from '../blogs/blogs.external.repository';
 
 @Injectable()
 export class PostsQueryExternalService {
   constructor(
     private readonly postsQueryExternalRepository: PostsQueryExternalRepository,
+    private readonly blogsExternalRepository: BlogsExternalRepository,
     private readonly likesQueryExternalService: LikesQueryExternalService,
   ) {}
 
-  async getPosts(
+  async getAllPostsForBlog(
     queryDto: GetPostsQueryParamsDto,
     userId: string | null,
     blogId: string,
   ): Promise<PaginatedViewDto<PostsMapper[]>> {
+    await this.blogsExternalRepository.getBlogById(blogId);
+
     const { posts, totalCount } =
       await this.postsQueryExternalRepository.getPosts(queryDto, blogId);
 
