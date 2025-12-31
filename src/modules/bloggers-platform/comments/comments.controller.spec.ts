@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CommentsController } from './comments.controller';
-import { CommentsService } from './comments.service';
+import { CommentsQueryService } from './comments.query.service';
 
 describe('CommentsController', () => {
   let controller: CommentsController;
@@ -8,7 +8,7 @@ describe('CommentsController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [CommentsController],
-      providers: [CommentsService],
+      providers: [CommentsQueryService],
     }).compile();
 
     controller = module.get<CommentsController>(CommentsController);

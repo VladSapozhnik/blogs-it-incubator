@@ -21,6 +21,12 @@ import { LikesController } from './likes/likes.controller';
 import { PostsQueryExternalRepository } from './posts/posts.query.external.repository';
 import { PostsQueryExternalService } from './posts/posts.query.external.service';
 import { PostsExternalRepository } from './posts/posts.external.repository';
+import { CommentsController } from './comments/comments.controller';
+import { CommentsQueryService } from './comments/comments.query.service';
+import { CommentsQueryRepository } from './comments/comments.query.repository';
+import { Comment, CommentSchema } from './comments/entities/comment.entity';
+import { CommentsQueryExternalRepository } from './comments/comments.query.external.repository';
+import { CommentsQueryExternalService } from './comments/comments.query.external.service';
 
 @Module({
   imports: [
@@ -28,9 +34,15 @@ import { PostsExternalRepository } from './posts/posts.external.repository';
       { name: Blog.name, schema: BlogSchema },
       { name: Post.name, schema: PostSchema },
       { name: Like.name, schema: LikeSchema },
+      { name: Comment.name, schema: CommentSchema },
     ]),
   ],
-  controllers: [BlogsController, PostsController, LikesController],
+  controllers: [
+    BlogsController,
+    PostsController,
+    LikesController,
+    CommentsController,
+  ],
   providers: [
     BlogsService,
     BlogsRepository,
@@ -48,8 +60,10 @@ import { PostsExternalRepository } from './posts/posts.external.repository';
     LikesService,
     LikesQueryExternalService,
     LikesQueryExternalRepository,
-    // LikesRepository,
-    // CommentsService,
+    CommentsQueryService,
+    CommentsQueryExternalService,
+    CommentsQueryRepository,
+    CommentsQueryExternalRepository,
   ],
 })
 export class BloggersPlatformModule {}

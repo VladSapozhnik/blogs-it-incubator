@@ -17,12 +17,16 @@ import { PostsMapper } from './mappers/blogs.mapper';
 import { PostsQueryService } from './posts.query.service';
 import { GetPostsQueryParamsDto } from './dto/post-query-input.dto';
 import { PaginatedViewDto } from '../../../core/dto/base.paginated.view.dto';
+import { GetCommentQueryParamsDto } from '../comments/dto/comment-query-input.dto';
+import { CommentsQueryExternalService } from '../comments/comments.query.external.service';
+import { CommentsMapper } from '../comments/mappers/comments.mapper';
 
 @Controller('posts')
 export class PostsController {
   constructor(
     private readonly postsService: PostsService,
     private readonly postQueryService: PostsQueryService,
+    private readonly commentsQueryExternalService: CommentsQueryExternalService,
   ) {}
 
   @Post()
@@ -37,6 +41,18 @@ export class PostsController {
     @Query() query: GetPostsQueryParamsDto,
   ): Promise<PaginatedViewDto<PostsMapper[]>> {
     return this.postQueryService.getPosts(query, null);
+  }
+
+  @Get(':postsId/comments')
+  findCommentsForPost(
+    @Param('postsId') postsId: string,
+    @Query() query: GetCommentQueryParamsDto,
+  ): Promise<PaginatedViewDto<CommentsMapper[]>> {
+    return this.commentsQueryExternalService.getCommentsByPostId(
+      query,
+      postsId,
+      null,
+    );
   }
 
   @Get(':id')
