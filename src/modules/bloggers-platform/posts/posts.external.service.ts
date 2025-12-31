@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Post, PostDocument, type PostModelType } from './entities/post.entity';
 import { BlogDocument } from '../blogs/entities/blog.entity';
 import { PostsExternalRepository } from './posts.external.repository';
@@ -31,7 +31,7 @@ export class PostsExternalService {
       await this.postsExternalRepository.createPost(newPost);
 
     if (!postId) {
-      throw new BadRequestException('Failed to create Post');
+      throw new NotFoundException('Failed to create Post');
     }
 
     return postId;

@@ -1,6 +1,6 @@
 import { Blog, BlogDocument, type BlogModelType } from './entities/blog.entity';
 import { InjectModel } from '@nestjs/mongoose';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 
 @Injectable()
 export class BlogsExternalRepository {
@@ -12,7 +12,7 @@ export class BlogsExternalRepository {
     });
 
     if (!findBlog) {
-      throw new BadRequestException("Blog doesn't exist");
+      throw new NotFoundException("Blog doesn't exist");
     }
 
     return findBlog;
