@@ -1,0 +1,83 @@
+import { Injectable } from '@nestjs/common';
+import {
+  SecurityDevice,
+  SecurityDeviceDocument,
+  type SecurityDeviceModel,
+} from '../entities/security-device.entity';
+import { InjectModel } from '@nestjs/mongoose';
+import { DeleteResult, Types, UpdateResult } from 'mongoose';
+import { UpdateSecurityDeviceDto } from '../dto/update-security-device.dto';
+
+@Injectable()
+export class SecurityDevicesRepository {
+  constructor(
+    @InjectModel(SecurityDevice.name)
+    private readonly SecurityDeviceModel: SecurityDeviceModel,
+  ) {}
+
+  async addDeviceSession(
+    device: SecurityDeviceDocument,
+  ): Promise<string | null> {
+    await device.save();
+
+    return device._id.toString();
+  }
+
+  async updateDeviceSession(
+    userId: string,
+    deviceId: string,
+    data: UpdateSecurityDeviceDto,
+  ): Promise<boolean> {
+    const result: UpdateResult = await this.SecurityDeviceModel.updateOne(
+      {
+        userId: new Types.ObjectId(userId),
+        deviceId,
+      },
+      { $set: data },
+    );
+
+    return result.matchedCount === 1;
+  }
+
+  async findDeviceSessionByUserIdAndDeviceId(
+    userId: string,
+    deviceId: string,
+  ): Promise<SecurityDeviceDocument | null> {
+    return this.SecurityDeviceModel.findOne({
+      userId: new Types.ObjectId(userId),
+      deviceId,
+    });
+  }
+
+  async findDeviceSessionByDeviceId(
+    deviceId: string,
+  ): Promise<SecurityDeviceDocument | null> {
+    return this.SecurityDeviceModel.findOne({
+      deviceId,
+    });
+  }
+
+  async removeDeviceSession(
+    userId: string,
+    deviceId: string,
+  ): Promise<boolean> {
+    const result: DeleteResult = await this.SecurityDeviceModel.deleteOne({
+      userId: new Types.ObjectId(userId),
+      deviceId,
+    });
+
+    return result.deletedCount === 1;
+  }
+
+  async removeOtherDeviceSession(
+    userId: string,
+    deviceId: string,
+  ): Promise<boolean> {
+    const result: DeleteResult = await this.SecurityDeviceModel.deleteMany({
+      userId: new Types.ObjectId(userId),
+      deviceId: { $ne: deviceId },
+    });
+
+    return result.deletedCount > 0;
+  }
+}
