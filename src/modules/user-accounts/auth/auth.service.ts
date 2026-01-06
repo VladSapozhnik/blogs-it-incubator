@@ -6,7 +6,7 @@ import {
 import { RegistrationDto } from './dto/registration.dto';
 import { HashAdapter } from '../../../core/adapters/hash.adapter';
 import { randomUUID } from 'node:crypto';
-import { generateId } from 'src/core/helpers/generate-id';
+import { generateId } from '../../../core/helpers/generate-id';
 import {
   User,
   UserDocument,
