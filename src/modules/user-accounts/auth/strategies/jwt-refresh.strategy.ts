@@ -12,7 +12,7 @@ export class JwtRefreshStrategy extends PassportStrategy(
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(), // Bearer <token>
       ignoreExpiration: false,
-      secretOrKey: process.env.JWT_REFRESH_SECRET || 'fallback-secret',
+      secretOrKey: process.env.JWT_REFRESH_SECRET || 'refreshSecret',
     });
   }
 
