@@ -14,7 +14,6 @@ export class CreateUserDto {
   // @Validate(IsLoginUnique, { message: 'login must be unique' })
   login: string;
   @IsNotEmpty()
-  @IsEmail()
   @Length(6, 20)
   password: string;
   @IsNotEmpty()

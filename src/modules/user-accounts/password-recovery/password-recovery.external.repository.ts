@@ -3,7 +3,7 @@ import {
   PasswordRecoveryDocument,
   type PasswordRecoveryModel,
 } from './entities/password-recovery.entity';
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 
 @Injectable()
@@ -20,12 +20,19 @@ export class PasswordRecoveryExternalRepository {
     return passwordRecovery._id.toString();
   }
 
-  async getPasswordRecoveryByCode(
+  async findPasswordRecoveryByCode(
     recoveryCode: string,
-  ): Promise<PasswordRecoveryDocument | null> {
-    return this.PasswordRecoveryModel.findOne({
-      recoveryCode,
-    });
+  ): Promise<PasswordRecoveryDocument> {
+    const passwordRecovery: PasswordRecoveryDocument | null =
+      await this.PasswordRecoveryModel.findOne({
+        recoveryCode,
+      });
+
+    if (!passwordRecovery) {
+      throw new BadRequestException('Code is invalid');
+    }
+
+    return passwordRecovery;
   }
 
   async markAsUsedById(

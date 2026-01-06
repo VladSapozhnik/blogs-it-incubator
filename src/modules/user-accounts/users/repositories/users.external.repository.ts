@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import {
   User,
@@ -9,16 +10,39 @@ import {
   type UserModelType,
 } from '../entities/user.entity';
 import { InjectModel } from '@nestjs/mongoose';
+import { Types } from 'mongoose';
 
 @Injectable()
-export class UsersRepository {
+export class UsersExternalRepository {
   constructor(
     @InjectModel(User.name) private readonly UserModel: UserModelType,
   ) {}
 
+  async getUserByLoginOrEmail(login: string, email: string) {
+    return this.UserModel.findOne({ $or: [{ login }, { email }] });
+  }
+
+  async findUserByCode(code: string): Promise<UserDocument | null> {
+    return this.UserModel.findOne({
+      'emailConfirmation.confirmationCode': code,
+    });
+  }
+
   async getUserById(id: string): Promise<UserDocument> {
     const user: UserDocument | null = await this.UserModel.findOne({
-      _id: id,
+      _id: new Types.ObjectId(id),
+    });
+
+    if (!user) {
+      throw new NotFoundException(`User not found`);
+    }
+
+    return user;
+  }
+
+  async findUserByEmail(email: string): Promise<UserDocument> {
+    const user: UserDocument | null = await this.UserModel.findOne({
+      email,
     });
 
     if (!user) {
@@ -30,7 +54,7 @@ export class UsersRepository {
 
   async checkUserDoesNotExist(id: string): Promise<null> {
     const user: UserDocument | null = await this.UserModel.findOne({
-      _id: id,
+      _id: new Types.ObjectId(id),
     });
 
     if (user) {
@@ -40,14 +64,21 @@ export class UsersRepository {
     return user;
   }
 
-  async findByLoginOrEmail(login: string, email: string) {
+  async findByLoginOrEmail(loginOrEmail: string): Promise<UserDocument> {
     const existUser: UserDocument | null = await this.UserModel.findOne({
-      $or: [{ login }, { email }],
+      $or: [{ login: loginOrEmail }, { email: loginOrEmail }],
     });
 
-    if (existUser) {
-      throw new BadRequestException('User already exists');
+    if (!existUser) {
+      throw new UnauthorizedException('Invalid login or password');
     }
+
+    return existUser;
+  }
+
+  async save(user: UserDocument): Promise<string> {
+    await user.save();
+    return user._id.toString();
   }
 
   async createUser(user: UserDocument): Promise<string> {
