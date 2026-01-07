@@ -4,6 +4,7 @@ import {
   ArgumentsHost,
   HttpException,
   BadRequestException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 
@@ -38,12 +39,16 @@ export class HttpExceptionFilter implements ExceptionFilter {
         errorsMessages,
       });
     }
-    // }
 
-    // response.status(status).json({
-    //   statusCode: status,
-    //   timestamp: new Date().toISOString(),
-    //   path: request.url,
-    // });
+    if (exception instanceof UnauthorizedException) {
+      return response.status(status).json({
+        errorsMessages: [
+          {
+            message: 'Unauthorized',
+            field: 'user',
+          },
+        ],
+      });
+    }
   }
 }
