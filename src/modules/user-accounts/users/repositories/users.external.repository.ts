@@ -46,7 +46,7 @@ export class UsersExternalRepository {
     });
 
     if (!user) {
-      throw new NotFoundException(`User not found`);
+      throw new BadRequestException(`Input incorrect email`);
     }
 
     return user;
