@@ -15,7 +15,12 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
   validate(payload: JwtPayload): JwtPayload {
     if (!payload.userId) {
-      throw new UnauthorizedException('Unauthorized');
+      throw new UnauthorizedException([
+        {
+          message: 'Unauthorized',
+          field: 'user',
+        },
+      ]);
     }
 
     return payload;

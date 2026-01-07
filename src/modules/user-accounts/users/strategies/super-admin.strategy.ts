@@ -12,6 +12,11 @@ export class SuperAdminStrategy extends PassportStrategy(Strategy) {
     if (username === 'admin' && password === 'qwerty') {
       return true;
     }
-    throw new UnauthorizedException();
+    throw new UnauthorizedException([
+      {
+        message: 'Invalid username or password',
+        field: 'admin',
+      },
+    ]);
   }
 }
