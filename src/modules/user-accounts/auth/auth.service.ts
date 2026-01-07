@@ -108,6 +108,24 @@ export class AuthService {
       ]);
     }
 
+    if (user.emailConfirmation.isConfirmed) {
+      throw new BadRequestException([
+        {
+          message: 'Email already confirmed',
+          field: 'code',
+        },
+      ]);
+    }
+
+    if (user.emailConfirmation.expirationDate < new Date()) {
+      throw new BadRequestException([
+        {
+          message: 'Confirmation code expired',
+          field: 'code',
+        },
+      ]);
+    }
+
     user.confirmEmail();
 
     await this.usersExternalRepository.save(user);
