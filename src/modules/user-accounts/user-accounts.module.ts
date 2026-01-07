@@ -26,6 +26,7 @@ import { JwtModule, JwtService } from '@nestjs/jwt';
 import { JwtStrategy } from './auth/strategies/jwt.strategy';
 import { JwtRefreshStrategy } from './auth/strategies/jwt-refresh.strategy';
 import { SuperAdminStrategy } from './users/strategies/super-admin.strategy';
+import { UsersQueryExternalRepository } from './users/repositories/users.query.external.repository';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { SuperAdminStrategy } from './users/strategies/super-admin.strategy';
     UsersRepository,
     UsersExternalRepository,
     UsersQueryRepository,
+    UsersQueryExternalRepository,
     AuthService,
     PasswordRecoveryExternalRepository,
     EmailAdapter,

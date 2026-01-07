@@ -7,24 +7,28 @@ import {
   HttpStatus,
   UseGuards,
   Res,
-  Req,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { CookieAdapter } from '../../../core/adapters/cookie.adapter';
-import { type Response, type Request } from 'express';
+import { type Response } from 'express';
 import { PasswordRecoveryDto } from './dto/password-recovery.dto';
 import { NewPasswordDto } from './dto/new-password.dto';
 import { RegistrationConfirmationCodeDto } from './dto/registration-confirmation-code.dto';
 import { RegistrationDto } from './dto/registration.dto';
 import { RegistrationEmailResendingDto } from './dto/registration-email-resending.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { UsersQueryExternalRepository } from '../users/repositories/users.query.external.repository';
+import { ProfileMapper } from './mappers/profile.mapper';
+import { type JwtPayload } from '../../../core/types/jwt-payload.type';
+import { User } from './decorator/user.decorator';
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly cookieAdapter: CookieAdapter,
+    private readonly userQueryExternalRepository: UsersQueryExternalRepository,
   ) {}
 
   @Post('login')
@@ -79,7 +83,7 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Get('me')
-  profile(@Req() req: Request) {
-    return req.user;
+  async profile(@User() user: JwtPayload): Promise<ProfileMapper> {
+    return this.userQueryExternalRepository.getProfile(user.userId);
   }
 }
