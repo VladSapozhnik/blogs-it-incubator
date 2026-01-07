@@ -20,7 +20,6 @@ import { RegistrationEmailResendingDto } from './dto/registration-email-resendin
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { UsersQueryExternalRepository } from '../users/repositories/users.query.external.repository';
 import { ProfileMapper } from './mappers/profile.mapper';
-import { type JwtPayload } from '../../../core/types/jwt-payload.type';
 import { User } from './decorator/user.decorator';
 
 @Controller('auth')
@@ -83,7 +82,7 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Get('me')
-  async profile(@User() user: JwtPayload): Promise<ProfileMapper> {
-    return this.userQueryExternalRepository.getProfile(user.userId);
+  async profile(@User('userId') userId: string): Promise<ProfileMapper> {
+    return this.userQueryExternalRepository.getProfile(userId);
   }
 }
