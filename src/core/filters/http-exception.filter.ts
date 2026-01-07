@@ -3,10 +3,9 @@ import {
   Catch,
   ArgumentsHost,
   HttpException,
-  BadRequestException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { Request, Response } from 'express';
+import { Response } from 'express';
 
 type ValidationErrorResponse = {
   message: Array<{
@@ -20,12 +19,10 @@ export class HttpExceptionFilter implements ExceptionFilter {
   catch(exception: HttpException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
-    const request = ctx.getRequest<Request>();
 
     const status = exception.getStatus();
     const exceptionResponse = exception.getResponse();
 
-    // if (exception instanceof BadRequestException) {
     if (
       typeof exceptionResponse === 'object' &&
       Array.isArray((exceptionResponse as ValidationErrorResponse).message) &&

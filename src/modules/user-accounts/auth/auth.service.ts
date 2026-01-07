@@ -138,6 +138,12 @@ export class AuthService {
     const user: UserDocument =
       await this.usersExternalRepository.findUserByEmail(email);
 
+    if (user.emailConfirmation.isConfirmed) {
+      throw new BadRequestException([
+        { field: 'email', message: 'Email already confirmed' },
+      ]);
+    }
+
     user.resendEmail(newCode, newExpiration);
 
     await this.usersExternalRepository.save(user);
