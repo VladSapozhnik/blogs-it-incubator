@@ -25,6 +25,7 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { JwtStrategy } from './auth/strategies/jwt.strategy';
 import { JwtRefreshStrategy } from './auth/strategies/jwt-refresh.strategy';
+import { SuperAdminStrategy } from './users/strategies/super-admin.strategy';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { JwtRefreshStrategy } from './auth/strategies/jwt-refresh.strategy';
     CookieAdapter,
     JwtStrategy,
     JwtRefreshStrategy,
+    SuperAdminStrategy,
   ],
 })
 export class UserAccountsModule {}
