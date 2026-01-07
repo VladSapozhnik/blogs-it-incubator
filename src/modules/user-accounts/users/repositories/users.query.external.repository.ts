@@ -20,7 +20,12 @@ export class UsersQueryExternalRepository {
     });
 
     if (!user) {
-      throw new UnauthorizedException('User not found!');
+      throw new UnauthorizedException([
+        {
+          message: 'Unauthorized',
+          field: 'user',
+        },
+      ]);
     }
 
     return ProfileMapper.mapToView(user);

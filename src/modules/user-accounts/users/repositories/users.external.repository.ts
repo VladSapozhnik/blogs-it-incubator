@@ -34,7 +34,12 @@ export class UsersExternalRepository {
     });
 
     if (!user) {
-      throw new NotFoundException(`User not found`);
+      throw new NotFoundException([
+        {
+          message: 'User not found',
+          field: 'id',
+        },
+      ]);
     }
 
     return user;
@@ -46,19 +51,12 @@ export class UsersExternalRepository {
     });
 
     if (!user) {
-      throw new BadRequestException(`Input incorrect email`);
-    }
-
-    return user;
-  }
-
-  async checkUserDoesNotExist(id: string): Promise<null> {
-    const user: UserDocument | null = await this.UserModel.findOne({
-      _id: new Types.ObjectId(id),
-    });
-
-    if (user) {
-      throw new BadRequestException('User already exists');
+      throw new BadRequestException([
+        {
+          message: 'Input incorrect email',
+          field: 'email',
+        },
+      ]);
     }
 
     return user;
@@ -70,7 +68,12 @@ export class UsersExternalRepository {
     });
 
     if (!existUser) {
-      throw new UnauthorizedException('Invalid login or password');
+      throw new UnauthorizedException([
+        {
+          message: 'Invalid login or password',
+          field: 'loginOrEmail',
+        },
+      ]);
     }
 
     return existUser;

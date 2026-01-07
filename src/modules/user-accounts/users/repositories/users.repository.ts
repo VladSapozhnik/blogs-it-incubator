@@ -22,19 +22,12 @@ export class UsersRepository {
     });
 
     if (!user) {
-      throw new NotFoundException(`User not found`);
-    }
-
-    return user;
-  }
-
-  async checkUserDoesNotExist(id: string): Promise<null> {
-    const user: UserDocument | null = await this.UserModel.findOne({
-      _id: id,
-    });
-
-    if (user) {
-      throw new BadRequestException('User already exists');
+      throw new NotFoundException([
+        {
+          message: 'User not found',
+          field: 'id',
+        },
+      ]);
     }
 
     return user;
@@ -46,7 +39,12 @@ export class UsersRepository {
     });
 
     if (existUser) {
-      throw new BadRequestException('User already exists');
+      throw new BadRequestException([
+        {
+          message: 'User already exists',
+          field: 'email',
+        },
+      ]);
     }
   }
 

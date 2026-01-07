@@ -64,9 +64,19 @@ export class AuthService {
 
     if (isUser) {
       if (isUser.login === dto.login) {
-        throw new BadRequestException('Login y exists');
+        throw new BadRequestException([
+          {
+            message: 'Login already exists',
+            field: 'login',
+          },
+        ]);
       } else if (isUser.email === dto.email) {
-        throw new BadRequestException('Email already exists');
+        throw new BadRequestException([
+          {
+            message: 'email already exists',
+            field: 'email',
+          },
+        ]);
       }
     }
 
@@ -90,7 +100,12 @@ export class AuthService {
       await this.usersExternalRepository.findUserByCode(code);
 
     if (!user) {
-      throw new BadRequestException('Invalid confirmation code');
+      throw new BadRequestException([
+        {
+          message: 'Invalid confirmation code',
+          field: 'code',
+        },
+      ]);
     }
 
     user.confirmEmail();
@@ -132,7 +147,12 @@ export class AuthService {
     );
 
     if (!isValidatePassword) {
-      throw new UnauthorizedException('Invalid login or password');
+      throw new UnauthorizedException([
+        {
+          message: 'Invalid login or password',
+          field: 'user',
+        },
+      ]);
     }
 
     const accessToken: string = await this.jwtAdapter.createAccessToken(

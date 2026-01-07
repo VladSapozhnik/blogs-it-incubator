@@ -39,7 +39,12 @@ export class UsersQueryRepository {
     });
 
     if (!user) {
-      throw new NotFoundException(`User not found`);
+      throw new NotFoundException([
+        {
+          message: 'User not found',
+          field: 'id',
+        },
+      ]);
     }
 
     return UsersMapper.mapToView(user);

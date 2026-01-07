@@ -29,7 +29,12 @@ export class PasswordRecoveryExternalRepository {
       });
 
     if (!passwordRecovery) {
-      throw new BadRequestException('Code is invalid');
+      throw new BadRequestException([
+        {
+          message: 'Code is invalid',
+          field: 'code',
+        },
+      ]);
     }
 
     return passwordRecovery;
