@@ -11,9 +11,9 @@ export class Like {
   login: string;
   @Prop({ required: true })
   targetId: Types.ObjectId;
-  @Prop({ required: true })
+  @Prop({ required: true, enum: LikeTargetEnum, type: 'string' })
   targetType: LikeTargetEnum;
-  @Prop({ required: true })
+  @Prop({ required: true, enum: LikeStatusEnum, type: 'string' })
   status: LikeStatusEnum;
   createdAt: Date;
   updatedAt: Date;

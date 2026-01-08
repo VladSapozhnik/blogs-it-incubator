@@ -6,12 +6,10 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Response } from 'express';
+import { ErrorMessageType } from '../types/error-message.type';
 
 type ValidationErrorResponse = {
-  message: Array<{
-    field: string;
-    message: string;
-  }>;
+  message: Array<ErrorMessageType>;
 };
 
 @Catch(HttpException)

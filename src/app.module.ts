@@ -1,16 +1,16 @@
+import { configModule } from './dynamic-config-module';
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserAccountsModule } from './modules/user-accounts/user-accounts.module';
 import { BloggersPlatformModule } from './modules/bloggers-platform/bloggers-platform.module';
-import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    configModule,
     MongooseModule.forRoot(
-      process.env.MONGO_URI || 'mongodb://localhost:27017',
-      { dbName: 'blog-nest-it-incubator' },
+      process.env.MONGODB_URI ||
+        'mongodb://localhost:27017/blog-nest-it-incubator',
     ),
     BloggersPlatformModule,
     UserAccountsModule,
