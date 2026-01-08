@@ -1,13 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { HttpStatus, INestApplication } from '@nestjs/common';
-import request from 'supertest';
+import request, { Response } from 'supertest';
 import { App } from 'supertest/types';
 import { AppModule } from '../src/app.module';
 import { appSetup } from '../src/setup/app.setup';
 import { deleteAllData } from './ helpers/delete-all-data';
-import { UsersMapper } from '../src/modules/user-accounts/users/mappers/users.mapper';
+import { type UsersMapper } from '../src/modules/user-accounts/users/mappers/users.mapper';
 import { errorMessageHelper } from './ helpers/error-message.helper';
 import { constantHelper } from './ helpers/constant.helper';
+import { getAllForPaginationHelper } from './ helpers/get-all-for-pagination.helper';
 
 describe('UserController (e2e)', () => {
   let app: INestApplication<App>;
@@ -74,6 +75,27 @@ describe('UserController (e2e)', () => {
       .expect(HttpStatus.BAD_REQUEST);
 
     expect(response.body).toEqual(errorMessageHelper(3));
+  });
+
+  it('/users (GET) returns users with pagination and status 200', async () => {
+    const response: Response = await request(app.getHttpServer())
+      .get('/users')
+      .auth(constantHelper.superAdmin.user, constantHelper.superAdmin.pass)
+      .expect(HttpStatus.OK);
+
+    expect(response.body).toEqual(getAllForPaginationHelper(response));
+  });
+
+  it('/users (GET) returns 401 when unauthorized super admin', async () => {
+    const response = await request(app.getHttpServer())
+      .get('/users')
+      .auth(
+        constantHelper.invalidSuperAdmin.user,
+        constantHelper.invalidSuperAdmin.pass,
+      )
+      .expect(HttpStatus.UNAUTHORIZED);
+
+    expect(response.body).toEqual(errorMessageHelper());
   });
 
   it('/users/id (DELETE) returns 401 when unauthorized user tries to delete', async () => {
