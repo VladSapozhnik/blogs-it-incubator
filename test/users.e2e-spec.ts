@@ -29,11 +29,7 @@ describe('UserController (e2e)', () => {
     const userResponse = await request(app.getHttpServer())
       .post('/users')
       .auth(constantHelper.superAdmin.user, constantHelper.superAdmin.pass)
-      .send({
-        login: 'usr-1-233',
-        email: 'testing@mail.com',
-        password: 'string',
-      })
+      .send({ ...constantHelper.users[0] })
       .expect(HttpStatus.CREATED);
     const userBody: UsersMapper = userResponse.body as UsersMapper;
 
@@ -53,11 +49,7 @@ describe('UserController (e2e)', () => {
         constantHelper.invalidSuperAdmin.user,
         constantHelper.invalidSuperAdmin.pass,
       )
-      .send({
-        login: 'usr-1-233',
-        email: 'testing@mail.com',
-        password: 'string',
-      })
+      .send({ ...constantHelper.users[1] })
       .expect(HttpStatus.UNAUTHORIZED);
 
     expect(response.body).toEqual(errorMessageHelper());
