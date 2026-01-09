@@ -7,8 +7,8 @@ export function pipesSetup(app: INestApplication) {
     new ValidationPipe({
       transform: true,
       stopAtFirstError: true,
-      whitelist: true,
-      forbidNonWhitelisted: true,
+      // whitelist: true,
+      // forbidNonWhitelisted: true,
       exceptionFactory: (errors) => {
         const errorsMessages = errors.map((err) => ({
           field: err.property,
