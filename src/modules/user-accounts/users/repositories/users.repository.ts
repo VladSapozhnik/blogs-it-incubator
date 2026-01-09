@@ -1,14 +1,11 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import {
   User,
   UserDocument,
   type UserModelType,
 } from '../entities/user.entity';
 import { InjectModel } from '@nestjs/mongoose';
+import { DomainException } from '../../../../core/exceptions/domain-exceptions';
 
 @Injectable()
 export class UsersRepository {
@@ -22,12 +19,15 @@ export class UsersRepository {
     });
 
     if (!user) {
-      throw new NotFoundException([
-        {
-          message: 'User not found',
-          field: 'id',
-        },
-      ]);
+      throw new DomainException({
+        status: HttpStatus.NOT_FOUND,
+        errorsMessages: [
+          {
+            message: 'User not found',
+            field: 'id',
+          },
+        ],
+      });
     }
 
     return user;
@@ -39,12 +39,15 @@ export class UsersRepository {
     });
 
     if (existUser) {
-      throw new BadRequestException([
-        {
-          message: 'User already exists',
-          field: 'email',
-        },
-      ]);
+      throw new DomainException({
+        status: HttpStatus.BAD_REQUEST,
+        errorsMessages: [
+          {
+            message: 'User already exists',
+            field: 'email',
+          },
+        ],
+      });
     }
   }
 

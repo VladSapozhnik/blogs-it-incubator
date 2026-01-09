@@ -6,8 +6,9 @@ import {
 } from '../entities/user.entity';
 import { GetUsersQueryParamsDto } from '../dto/users-query-input.dto';
 import { UsersMapper } from '../mappers/users.mapper';
-import { NotFoundException } from '@nestjs/common';
+import { HttpStatus } from '@nestjs/common';
 import { PaginatedViewDto } from '../../../../core/dto/base.paginated.view.dto';
+import { DomainException } from '../../../../core/exceptions/domain-exceptions';
 
 export class UsersQueryRepository {
   constructor(
@@ -39,12 +40,15 @@ export class UsersQueryRepository {
     });
 
     if (!user) {
-      throw new NotFoundException([
-        {
-          message: 'User not found',
-          field: 'id',
-        },
-      ]);
+      throw new DomainException({
+        status: HttpStatus.NOT_FOUND,
+        errorsMessages: [
+          {
+            message: 'User not found',
+            field: 'id',
+          },
+        ],
+      });
     }
 
     return UsersMapper.mapToView(user);

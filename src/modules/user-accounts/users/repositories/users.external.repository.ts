@@ -1,9 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import {
   User,
   UserDocument,
@@ -11,6 +6,7 @@ import {
 } from '../entities/user.entity';
 import { InjectModel } from '@nestjs/mongoose';
 import { Types } from 'mongoose';
+import { DomainException } from '../../../../core/exceptions/domain-exceptions';
 
 @Injectable()
 export class UsersExternalRepository {
@@ -34,12 +30,15 @@ export class UsersExternalRepository {
     });
 
     if (!user) {
-      throw new NotFoundException([
-        {
-          message: 'User not found',
-          field: 'id',
-        },
-      ]);
+      throw new DomainException({
+        status: HttpStatus.NOT_FOUND,
+        errorsMessages: [
+          {
+            message: 'User not found',
+            field: 'id',
+          },
+        ],
+      });
     }
 
     return user;
@@ -51,12 +50,15 @@ export class UsersExternalRepository {
     });
 
     if (!user) {
-      throw new BadRequestException([
-        {
-          message: 'Input incorrect email',
-          field: 'email',
-        },
-      ]);
+      throw new DomainException({
+        status: HttpStatus.BAD_REQUEST,
+        errorsMessages: [
+          {
+            message: 'Input incorrect email',
+            field: 'email',
+          },
+        ],
+      });
     }
 
     return user;
@@ -68,12 +70,15 @@ export class UsersExternalRepository {
     });
 
     if (!existUser) {
-      throw new UnauthorizedException([
-        {
-          message: 'Invalid login or password',
-          field: 'loginOrEmail',
-        },
-      ]);
+      throw new DomainException({
+        status: HttpStatus.UNAUTHORIZED,
+        errorsMessages: [
+          {
+            message: 'Invalid login or password',
+            field: 'loginOrEmail',
+          },
+        ],
+      });
     }
 
     return existUser;

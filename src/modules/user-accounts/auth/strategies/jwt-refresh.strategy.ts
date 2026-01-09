@@ -1,7 +1,8 @@
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { JwtPayload } from '../../../../core/types/jwt-payload.type';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
+import { DomainException } from '../../../../core/exceptions/domain-exceptions';
 
 @Injectable()
 export class JwtRefreshStrategy extends PassportStrategy(
@@ -18,12 +19,15 @@ export class JwtRefreshStrategy extends PassportStrategy(
 
   validate(payload: JwtPayload): JwtPayload {
     if (!payload.userId || !payload.deviceId) {
-      throw new UnauthorizedException([
-        {
-          message: 'Unauthorized',
-          field: 'user',
-        },
-      ]);
+      throw new DomainException({
+        status: HttpStatus.UNAUTHORIZED,
+        errorsMessages: [
+          {
+            message: 'Unauthorized',
+            field: 'user',
+          },
+        ],
+      });
     }
 
     return payload;

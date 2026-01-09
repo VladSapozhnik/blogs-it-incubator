@@ -3,8 +3,9 @@ import {
   PasswordRecoveryDocument,
   type PasswordRecoveryModel,
 } from './entities/password-recovery.entity';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { DomainException } from '../../../core/exceptions/domain-exceptions';
 
 @Injectable()
 export class PasswordRecoveryExternalRepository {
@@ -29,12 +30,15 @@ export class PasswordRecoveryExternalRepository {
       });
 
     if (!passwordRecovery) {
-      throw new BadRequestException([
-        {
-          message: 'Code is invalid',
-          field: 'code',
-        },
-      ]);
+      throw new DomainException({
+        status: HttpStatus.BAD_REQUEST,
+        errorsMessages: [
+          {
+            message: 'Code is invalid',
+            field: 'code',
+          },
+        ],
+      });
     }
 
     return passwordRecovery;

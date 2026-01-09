@@ -2,7 +2,8 @@ import { HydratedDocument, Model, Types } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { add } from 'date-fns/add';
 import { randomUUID } from 'node:crypto';
-import { BadRequestException } from '@nestjs/common';
+import { HttpStatus } from '@nestjs/common';
+import { DomainException } from '../../../../core/exceptions/domain-exceptions';
 
 @Schema()
 export class PasswordRecovery {
@@ -27,7 +28,15 @@ export class PasswordRecovery {
 
   validateRecoveryCode(): void {
     if (this.isUsed || this.expirationDate < new Date()) {
-      throw new BadRequestException('Code is invalid');
+      throw new DomainException({
+        status: HttpStatus.BAD_REQUEST,
+        errorsMessages: [
+          {
+            message: 'Code is invalid',
+            field: 'code',
+          },
+        ],
+      });
     }
   }
 

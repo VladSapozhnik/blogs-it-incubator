@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { RegistrationDto } from './dto/registration.dto';
 import { HashAdapter } from '../../../core/adapters/hash.adapter';
 import { randomUUID } from 'node:crypto';
@@ -28,6 +24,7 @@ import {
 import { JwtPayload } from '../../../core/types/jwt-payload.type';
 import { JwtAdapter } from '../../../core/adapters/jwt.adapter';
 import { NewPasswordDto } from './dto/new-password.dto';
+import { DomainException } from '../../../core/exceptions/domain-exceptions';
 
 @Injectable()
 export class AuthService {
@@ -64,19 +61,25 @@ export class AuthService {
 
     if (isUser) {
       if (isUser.login === dto.login) {
-        throw new BadRequestException([
-          {
-            message: 'Login already exists',
-            field: 'login',
-          },
-        ]);
+        throw new DomainException({
+          status: HttpStatus.BAD_REQUEST,
+          errorsMessages: [
+            {
+              message: 'Login already exists',
+              field: 'login',
+            },
+          ],
+        });
       } else if (isUser.email === dto.email) {
-        throw new BadRequestException([
-          {
-            message: 'email already exists',
-            field: 'email',
-          },
-        ]);
+        throw new DomainException({
+          status: HttpStatus.BAD_REQUEST,
+          errorsMessages: [
+            {
+              message: 'Email already exists',
+              field: 'email',
+            },
+          ],
+        });
       }
     }
 
@@ -100,30 +103,39 @@ export class AuthService {
       await this.usersExternalRepository.findUserByCode(code);
 
     if (!user) {
-      throw new BadRequestException([
-        {
-          message: 'Invalid confirmation code',
-          field: 'code',
-        },
-      ]);
+      throw new DomainException({
+        status: HttpStatus.BAD_REQUEST,
+        errorsMessages: [
+          {
+            message: 'Invalid confirmation code',
+            field: 'code',
+          },
+        ],
+      });
     }
 
     if (user.emailConfirmation.isConfirmed) {
-      throw new BadRequestException([
-        {
-          message: 'Email already confirmed',
-          field: 'code',
-        },
-      ]);
+      throw new DomainException({
+        status: HttpStatus.BAD_REQUEST,
+        errorsMessages: [
+          {
+            message: 'Email already confirmed',
+            field: 'code',
+          },
+        ],
+      });
     }
 
     if (user.emailConfirmation.expirationDate < new Date()) {
-      throw new BadRequestException([
-        {
-          message: 'Confirmation code expired',
-          field: 'code',
-        },
-      ]);
+      throw new DomainException({
+        status: HttpStatus.BAD_REQUEST,
+        errorsMessages: [
+          {
+            message: 'Confirmation code expired',
+            field: 'code',
+          },
+        ],
+      });
     }
 
     user.confirmEmail();
@@ -139,9 +151,15 @@ export class AuthService {
       await this.usersExternalRepository.findUserByEmail(email);
 
     if (user.emailConfirmation.isConfirmed) {
-      throw new BadRequestException([
-        { field: 'email', message: 'Email already confirmed' },
-      ]);
+      throw new DomainException({
+        status: HttpStatus.BAD_REQUEST,
+        errorsMessages: [
+          {
+            message: 'Email already confirmed',
+            field: 'email',
+          },
+        ],
+      });
     }
 
     user.resendEmail(newCode, newExpiration);
@@ -171,12 +189,15 @@ export class AuthService {
     );
 
     if (!isValidatePassword) {
-      throw new UnauthorizedException([
-        {
-          message: 'Invalid login or password',
-          field: 'user',
-        },
-      ]);
+      throw new DomainException({
+        status: HttpStatus.UNAUTHORIZED,
+        errorsMessages: [
+          {
+            message: 'Invalid login or password',
+            field: 'user',
+          },
+        ],
+      });
     }
 
     const accessToken: string = await this.jwtAdapter.createAccessToken(

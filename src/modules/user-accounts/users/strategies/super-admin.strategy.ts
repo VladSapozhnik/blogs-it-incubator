@@ -1,6 +1,7 @@
 import { PassportStrategy } from '@nestjs/passport';
 import { BasicStrategy as Strategy } from 'passport-http'; // Импортируем как Strategy
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
+import { DomainException } from '../../../../core/exceptions/domain-exceptions';
 
 @Injectable()
 export class SuperAdminStrategy extends PassportStrategy(Strategy) {
@@ -12,11 +13,15 @@ export class SuperAdminStrategy extends PassportStrategy(Strategy) {
     if (username === 'admin' && password === 'qwerty') {
       return true;
     }
-    throw new UnauthorizedException([
-      {
-        message: 'Invalid username or password',
-        field: 'admin',
-      },
-    ]);
+
+    throw new DomainException({
+      status: HttpStatus.UNAUTHORIZED,
+      errorsMessages: [
+        {
+          field: 'admin',
+          message: 'Unauthorized super admin',
+        },
+      ],
+    });
   }
 }

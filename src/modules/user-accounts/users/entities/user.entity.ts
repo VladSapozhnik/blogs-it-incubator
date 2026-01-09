@@ -1,7 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { HydratedDocument, Model } from 'mongoose';
-import { BadRequestException } from '@nestjs/common';
+import { HttpStatus } from '@nestjs/common';
+import { DomainException } from '../../../../core/exceptions/domain-exceptions';
 
 export type EmailConfirmationType = {
   confirmationCode: string;
@@ -59,10 +60,26 @@ export class User {
 
   confirmEmail() {
     if (this.emailConfirmation.isConfirmed) {
-      throw new BadRequestException('Email already confirmed', 'User');
+      throw new DomainException({
+        status: HttpStatus.BAD_REQUEST,
+        errorsMessages: [
+          {
+            message: 'Email already confirmed',
+            field: 'User',
+          },
+        ],
+      });
     }
     if (this.emailConfirmation.expirationDate < new Date()) {
-      throw new BadRequestException('Confirmation code expired');
+      throw new DomainException({
+        status: HttpStatus.BAD_REQUEST,
+        errorsMessages: [
+          {
+            message: 'Confirmation code expired',
+            field: 'code',
+          },
+        ],
+      });
     }
 
     this.emailConfirmation.isConfirmed = true;
