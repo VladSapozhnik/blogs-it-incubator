@@ -31,8 +31,10 @@ export class Comment {
 
     comment.postId = new Types.ObjectId(postId);
     comment.content = content;
-    comment.commentatorInfo.userId = new Types.ObjectId(userId);
-    comment.commentatorInfo.userLogin = userLogin;
+    comment.commentatorInfo = {
+      userId: new Types.ObjectId(userId),
+      userLogin,
+    };
 
     return comment as CommentDocument;
   }

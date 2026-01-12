@@ -19,8 +19,8 @@ import { User } from '../../user-accounts/auth/decorator/user.decorator';
 import { LikesExternalService } from '../likes/services/likes.external.service';
 import { UpdateLikeDto } from '../likes/dto/update-like.dto';
 
-@Controller('comments')
 @UseGuards(JwtAuthGuard)
+@Controller('comments')
 export class CommentsController {
   constructor(
     private readonly commentsQueryService: CommentsQueryService,

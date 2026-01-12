@@ -31,7 +31,6 @@ import { LikesExternalService } from '../likes/services/likes.external.service';
 import { UpdateLikeDto } from '../likes/dto/update-like.dto';
 
 @Controller('posts')
-// @UseGuards(SuperAdminAuthGuard)
 export class PostsController {
   constructor(
     private readonly postsService: PostsService,
@@ -41,8 +40,8 @@ export class PostsController {
     private readonly likesExternalService: LikesExternalService,
   ) {}
 
-  @Put(':postId/like-status')
   @UseGuards(JwtAuthGuard)
+  @Put(':postId/like-status')
   @HttpCode(HttpStatus.NO_CONTENT)
   async makeStatus(
     @Param('postId') postId: string,
@@ -52,6 +51,7 @@ export class PostsController {
     return this.likesExternalService.updatePostLikeStatus(userId, postId, dto);
   }
 
+  @UseGuards(SuperAdminAuthGuard)
   @Post()
   async create(@Body() createPostDto: CreatePostDto): Promise<PostsMapper> {
     const id: string = await this.postsService.createPost(createPostDto);
@@ -59,18 +59,18 @@ export class PostsController {
     return this.postQueryService.getPostById(id, null);
   }
 
-  @Get()
   @Public()
+  @Get()
   findAll(
     @Query() query: GetPostsQueryParamsDto,
   ): Promise<PaginatedViewDto<PostsMapper[]>> {
     return this.postQueryService.getPosts(query, null);
   }
 
-  @Get(':postsId/comments')
   @Public()
+  @Get(':postId/comments')
   findCommentsForPost(
-    @Param('postsId') postsId: string,
+    @Param('postId') postsId: string,
     @Query() query: GetCommentQueryParamsDto,
   ): Promise<PaginatedViewDto<CommentsMapper[]>> {
     return this.commentsQueryExternalService.getCommentsByPostId(
@@ -80,13 +80,13 @@ export class PostsController {
     );
   }
 
-  @Post(':postsId/comments')
+  @Post(':postId/comments')
   @UseGuards(JwtAuthGuard)
   async createCommentForPost(
-    @Param('postsId') postsId: string,
+    @Param('postId') postsId: string,
     @User('userId') userId: string,
     @Body() createCommentDto: CreateCommentDto,
-  ): Promise<CommentsMapper> {
+  ) {
     const commentId: string = await this.commentsExternalService.createComment(
       userId,
       postsId,
@@ -96,18 +96,20 @@ export class PostsController {
     return this.commentsQueryExternalService.getCommentById(commentId, userId);
   }
 
-  @Get(':id')
   @Public()
+  @Get(':id')
   findOne(@Param('id') id: string) {
     return this.postQueryService.getPostById(id, null);
   }
 
+  @UseGuards(SuperAdminAuthGuard)
   @Put(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
     return this.postsService.updatePost(id, updatePostDto);
   }
 
+  @UseGuards(SuperAdminAuthGuard)
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id') id: string) {

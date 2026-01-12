@@ -6,6 +6,7 @@ import {
 } from '../entities/user.entity';
 import { InjectModel } from '@nestjs/mongoose';
 import { DomainException } from '../../../../core/exceptions/domain-exceptions';
+import { Types } from 'mongoose';
 
 @Injectable()
 export class UsersRepository {
@@ -15,7 +16,7 @@ export class UsersRepository {
 
   async getUserById(id: string): Promise<UserDocument> {
     const user: UserDocument | null = await this.UserModel.findOne({
-      _id: id,
+      _id: new Types.ObjectId(id),
     });
 
     if (!user) {

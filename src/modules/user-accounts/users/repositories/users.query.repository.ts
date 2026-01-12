@@ -9,6 +9,7 @@ import { UsersMapper } from '../mappers/users.mapper';
 import { HttpStatus } from '@nestjs/common';
 import { PaginatedViewDto } from '../../../../core/dto/base.paginated.view.dto';
 import { DomainException } from '../../../../core/exceptions/domain-exceptions';
+import { Types } from 'mongoose';
 
 export class UsersQueryRepository {
   constructor(
@@ -36,7 +37,7 @@ export class UsersQueryRepository {
 
   async getUserById(id: string): Promise<UsersMapper> {
     const user: UserDocument | null = await this.UserModel.findOne({
-      _id: id,
+      _id: new Types.ObjectId(id),
     });
 
     if (!user) {
