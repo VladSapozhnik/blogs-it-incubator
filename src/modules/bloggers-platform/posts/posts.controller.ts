@@ -23,6 +23,9 @@ import { CommentsQueryExternalService } from '../comments/services/comments.quer
 import { CommentsMapper } from '../comments/mappers/comments.mapper';
 import { SuperAdminAuthGuard } from '../../user-accounts/users/guards/super-admin-auth.guard';
 import { Public } from '../../../core/decorators/public.decorator';
+import { CommentsExternalService } from '../comments/services/comments.external.service';
+import { CreateCommentDto } from '../comments/dto/create-comment.dto';
+import { User } from '../../user-accounts/auth/decorator/user.decorator';
 
 @Controller('posts')
 @UseGuards(SuperAdminAuthGuard)
@@ -31,6 +34,7 @@ export class PostsController {
     private readonly postsService: PostsService,
     private readonly postQueryService: PostsQueryService,
     private readonly commentsQueryExternalService: CommentsQueryExternalService,
+    private readonly commentsExternalService: CommentsExternalService,
   ) {}
 
   @Post()
@@ -59,6 +63,21 @@ export class PostsController {
       postsId,
       null,
     );
+  }
+
+  @Post(':postsId/comments')
+  async createCommentForPost(
+    @Param('postsId') postsId: string,
+    @User('userId') userId: string,
+    @Body() createCommentDto: CreateCommentDto,
+  ): Promise<CommentsMapper> {
+    const commentId: string = await this.commentsExternalService.createComment(
+      userId,
+      postsId,
+      createCommentDto,
+    );
+
+    return this.commentsQueryExternalService.getCommentById(commentId, userId);
   }
 
   @Get(':id')

@@ -46,4 +46,20 @@ export class CommentsQueryExternalService {
       size: queryDto.pageSize,
     });
   }
+
+  async getCommentById(
+    commentId: string,
+    userId: string | null = null,
+  ): Promise<CommentsMapper> {
+    const comment: CommentDocument | null =
+      await this.commentsQueryExternalRepository.getCommentById(commentId);
+
+    const likesInfo: LikesInfoOutputType =
+      await this.likesQueryExternalServices.likesInfoForComment(
+        comment._id.toString(),
+        userId,
+      );
+
+    return CommentsMapper.mapToView(comment, likesInfo);
+  }
 }

@@ -14,7 +14,7 @@ export class CommentsQueryService {
 
   async getCommentById(
     id: string,
-    userId: string | null,
+    userId: string | null = null,
   ): Promise<CommentsMapper> {
     const comment: CommentDocument | null =
       await this.commentsQueryRepository.getCommentById(id);
