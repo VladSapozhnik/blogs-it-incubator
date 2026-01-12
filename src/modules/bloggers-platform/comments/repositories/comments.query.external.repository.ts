@@ -3,10 +3,11 @@ import {
   CommentDocument,
   type CommentModelType,
 } from '../entities/comment.entity';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Types } from 'mongoose';
 import { GetCommentQueryParamsDto } from '../dto/comment-query-input.dto';
+import { DomainException } from '../../../../core/exceptions/domain-exceptions';
 
 @Injectable()
 export class CommentsQueryExternalRepository {
@@ -41,7 +42,15 @@ export class CommentsQueryExternalRepository {
     });
 
     if (!comment) {
-      throw new NotFoundException('Comment not found');
+      throw new DomainException({
+        status: HttpStatus.NOT_FOUND,
+        errorsMessages: [
+          {
+            message: 'Comment not found',
+            field: 'comment',
+          },
+        ],
+      });
     }
 
     return comment;

@@ -7,7 +7,7 @@ import { Like, type LikeModelType } from '../entities/like.entity';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
-export class LikesRepository {
+export class LikesExternalRepository {
   constructor(
     @InjectModel(Like.name) private readonly LikeModel: LikeModelType,
   ) {}

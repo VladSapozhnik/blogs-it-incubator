@@ -27,7 +27,7 @@ export class PostsExternalRepository {
 
     if (!existPost) {
       throw new DomainException({
-        status: HttpStatus.UNAUTHORIZED,
+        status: HttpStatus.NOT_FOUND,
         errorsMessages: [
           {
             message: 'Not found post',

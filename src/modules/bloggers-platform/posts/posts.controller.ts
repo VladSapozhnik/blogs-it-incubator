@@ -27,6 +27,8 @@ import { CommentsExternalService } from '../comments/services/comments.external.
 import { CreateCommentDto } from '../comments/dto/create-comment.dto';
 import { User } from '../../user-accounts/auth/decorator/user.decorator';
 import { JwtAuthGuard } from '../../user-accounts/auth/guards/jwt-auth.guard';
+import { LikesExternalService } from '../likes/services/likes.external.service';
+import { UpdateLikeDto } from '../likes/dto/update-like.dto';
 
 @Controller('posts')
 @UseGuards(SuperAdminAuthGuard)
@@ -36,7 +38,19 @@ export class PostsController {
     private readonly postQueryService: PostsQueryService,
     private readonly commentsQueryExternalService: CommentsQueryExternalService,
     private readonly commentsExternalService: CommentsExternalService,
+    private readonly likesExternalService: LikesExternalService,
   ) {}
+
+  @Put(':postId/like-status')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async makeStatus(
+    @Param('postId') postId: string,
+    @User('userId') userId: string,
+    dto: UpdateLikeDto,
+  ) {
+    return this.likesExternalService.updatePostLikeStatus(userId, postId, dto);
+  }
 
   @Post()
   async create(@Body() createPostDto: CreatePostDto): Promise<PostsMapper> {

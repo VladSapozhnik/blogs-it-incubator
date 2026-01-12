@@ -14,7 +14,7 @@ import { PostsQueryService } from './posts/services/posts.query.service';
 import { PostsExternalService } from './posts/services/posts.external.service';
 import { PostsRepository } from './posts/repositories/posts.repository';
 import { PostsQueryRepository } from './posts/repositories/posts.query.repository';
-import { LikesService } from './likes/services/likes.service';
+import { LikesExternalService } from './likes/services/likes.external.service';
 import { LikesQueryExternalService } from './likes/services/likes.query.external.service';
 import { LikesQueryExternalRepository } from './likes/repositories/likes.query.external.repository';
 import { LikesController } from './likes/likes.controller';
@@ -64,7 +64,7 @@ import { UserAccountsModule } from '../user-accounts/user-accounts.module';
     PostsExternalRepository,
     PostsQueryRepository,
     PostsQueryExternalRepository,
-    LikesService,
+    LikesExternalService,
     LikesQueryExternalService,
     LikesQueryExternalRepository,
     CommentsService,

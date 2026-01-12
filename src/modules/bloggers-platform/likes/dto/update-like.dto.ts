@@ -1,4 +1,8 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateLikeDto } from './create-like.dto';
+import { LikeStatusEnum } from '../enums/like-status.enum';
+import { IsEnum, IsNotEmpty } from 'class-validator';
 
-export class UpdateLikeDto extends PartialType(CreateLikeDto) {}
+export class UpdateLikeDto {
+  @IsNotEmpty()
+  @IsEnum(LikeStatusEnum)
+  likeStatus: LikeStatusEnum;
+}
