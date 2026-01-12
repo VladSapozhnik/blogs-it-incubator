@@ -17,7 +17,6 @@ import { PostsQueryRepository } from './posts/repositories/posts.query.repositor
 import { LikesExternalService } from './likes/services/likes.external.service';
 import { LikesQueryExternalService } from './likes/services/likes.query.external.service';
 import { LikesQueryExternalRepository } from './likes/repositories/likes.query.external.repository';
-import { LikesController } from './likes/likes.controller';
 import { PostsQueryExternalRepository } from './posts/repositories/posts.query.external.repository';
 import { PostsQueryExternalService } from './posts/services/posts.query.external.service';
 import { PostsExternalRepository } from './posts/repositories/posts.external.repository';
@@ -31,8 +30,8 @@ import { CommentsExternalRepository } from './comments/repositories/comments.ext
 import { CommentsRepository } from './comments/repositories/comments.repository';
 import { CommentsService } from './comments/services/comments.service';
 import { CommentsExternalService } from './comments/services/comments.external.service';
-import { UsersExternalRepository } from '../user-accounts/users/repositories/users.external.repository';
 import { UserAccountsModule } from '../user-accounts/user-accounts.module';
+import { LikesExternalRepository } from './likes/repositories/likes.external.repository';
 
 @Module({
   imports: [
@@ -44,12 +43,7 @@ import { UserAccountsModule } from '../user-accounts/user-accounts.module';
       { name: Comment.name, schema: CommentSchema },
     ]),
   ],
-  controllers: [
-    BlogsController,
-    PostsController,
-    LikesController,
-    CommentsController,
-  ],
+  controllers: [BlogsController, PostsController, CommentsController],
   providers: [
     BlogsService,
     BlogsRepository,
@@ -66,6 +60,7 @@ import { UserAccountsModule } from '../user-accounts/user-accounts.module';
     PostsQueryExternalRepository,
     LikesExternalService,
     LikesQueryExternalService,
+    LikesExternalRepository,
     LikesQueryExternalRepository,
     CommentsService,
     CommentsExternalService,
