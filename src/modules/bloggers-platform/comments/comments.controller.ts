@@ -36,8 +36,8 @@ export class CommentsController {
     @Param('commentId') commentId: string,
   ) {
     return this.likesExternalService.updateCommentLikeStatus(
-      commentId,
       userId,
+      commentId,
       dto,
     );
   }
