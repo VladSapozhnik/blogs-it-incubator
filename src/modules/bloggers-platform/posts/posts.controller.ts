@@ -26,6 +26,7 @@ import { Public } from '../../../core/decorators/public.decorator';
 import { CommentsExternalService } from '../comments/services/comments.external.service';
 import { CreateCommentDto } from '../comments/dto/create-comment.dto';
 import { User } from '../../user-accounts/auth/decorator/user.decorator';
+import { JwtAuthGuard } from '../../user-accounts/auth/guards/jwt-auth.guard';
 
 @Controller('posts')
 @UseGuards(SuperAdminAuthGuard)
@@ -66,6 +67,7 @@ export class PostsController {
   }
 
   @Post(':postsId/comments')
+  @UseGuards(JwtAuthGuard)
   async createCommentForPost(
     @Param('postsId') postsId: string,
     @User('userId') userId: string,
