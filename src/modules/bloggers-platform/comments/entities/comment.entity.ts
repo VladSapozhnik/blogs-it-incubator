@@ -20,6 +20,22 @@ export class Comment {
   };
   createdAt: Date;
   updatedAt: Date;
+
+  static createInstance(
+    postId: string,
+    content: string,
+    userId: string,
+    userLogin: string,
+  ) {
+    const comment = new this();
+
+    comment.postId = new Types.ObjectId(postId);
+    comment.content = content;
+    comment.commentatorInfo.userId = new Types.ObjectId(userId);
+    comment.commentatorInfo.userLogin = userLogin;
+
+    return comment as CommentDocument;
+  }
 }
 
 export const CommentSchema = SchemaFactory.createForClass(Comment);

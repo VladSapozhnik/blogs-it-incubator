@@ -27,9 +27,16 @@ import { CommentsQueryRepository } from './comments/repositories/comments.query.
 import { Comment, CommentSchema } from './comments/entities/comment.entity';
 import { CommentsQueryExternalRepository } from './comments/repositories/comments.query.external.repository';
 import { CommentsQueryExternalService } from './comments/services/comments.query.external.service';
+import { CommentsExternalRepository } from './comments/repositories/comments.external.repository';
+import { CommentsRepository } from './comments/repositories/comments.repository';
+import { CommentsService } from './comments/services/comments.service';
+import { CommentsExternalService } from './comments/services/comments.external.service';
+import { UsersExternalRepository } from '../user-accounts/users/repositories/users.external.repository';
+import { UserAccountsModule } from '../user-accounts/user-accounts.module';
 
 @Module({
   imports: [
+    UserAccountsModule,
     MongooseModule.forFeature([
       { name: Blog.name, schema: BlogSchema },
       { name: Post.name, schema: PostSchema },
@@ -60,7 +67,11 @@ import { CommentsQueryExternalService } from './comments/services/comments.query
     LikesService,
     LikesQueryExternalService,
     LikesQueryExternalRepository,
+    CommentsService,
+    CommentsExternalService,
     CommentsQueryService,
+    CommentsExternalRepository,
+    CommentsRepository,
     CommentsQueryExternalService,
     CommentsQueryRepository,
     CommentsQueryExternalRepository,

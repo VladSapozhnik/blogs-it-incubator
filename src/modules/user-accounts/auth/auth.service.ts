@@ -267,10 +267,22 @@ export class AuthService {
 
     const hash: string = await this.hashAdapter.hashPassword(dto.newPassword);
 
-    const existUser: UserDocument =
+    const existUser: UserDocument | null =
       await this.usersExternalRepository.getUserById(
         passwordRecovery.userId.toString(),
       );
+
+    if (!existUser) {
+      throw new DomainException({
+        status: HttpStatus.BAD_REQUEST,
+        errorsMessages: [
+          {
+            message: 'Bad request',
+            field: 'id',
+          },
+        ],
+      });
+    }
 
     existUser.setPassword(hash);
 

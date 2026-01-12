@@ -9,6 +9,7 @@ import {
   HttpCode,
   Delete,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import { BlogsService } from './services/blogs.service';
 import { CreateBlogDto } from './dto/create-blog.dto';
@@ -22,8 +23,11 @@ import { PostsQueryExternalService } from '../posts/services/posts.query.externa
 import { PostsMapper } from '../posts/mappers/blogs.mapper';
 import { PostsExternalService } from '../posts/services/posts.external.service';
 import { CreatePostForBlogDto } from '../posts/dto/create-post-for-blog.dto';
+import { SuperAdminAuthGuard } from '../../user-accounts/users/guards/super-admin-auth.guard';
+import { Public } from '../../../core/decorators/public.decorator';
 
 @Controller('blogs')
+@UseGuards(SuperAdminAuthGuard)
 export class BlogsController {
   constructor(
     private readonly blogsService: BlogsService,
@@ -39,6 +43,7 @@ export class BlogsController {
   }
 
   @Get()
+  @Public()
   findAll(
     @Query() query: GetBlogsQueryParamsDto,
   ): Promise<PaginatedViewDto<BlogsMapper[]>> {
@@ -46,6 +51,7 @@ export class BlogsController {
   }
 
   @Get(':blogId/posts')
+  @Public()
   findAllPostByBlogId(
     @Param('blogId') blogId: string,
     @Query() query: GetPostsQueryParamsDto,
@@ -71,6 +77,7 @@ export class BlogsController {
   }
 
   @Get(':id')
+  @Public()
   findOne(@Param('id') id: string): Promise<BlogsMapper> {
     return this.blogsQueryRepository.getBlogById(id);
   }

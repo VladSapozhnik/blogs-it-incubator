@@ -9,6 +9,7 @@ import {
   HttpCode,
   HttpStatus,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { PostsService } from './services/posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
@@ -20,8 +21,11 @@ import { PaginatedViewDto } from '../../../core/dto/base.paginated.view.dto';
 import { GetCommentQueryParamsDto } from '../comments/dto/comment-query-input.dto';
 import { CommentsQueryExternalService } from '../comments/services/comments.query.external.service';
 import { CommentsMapper } from '../comments/mappers/comments.mapper';
+import { SuperAdminAuthGuard } from '../../user-accounts/users/guards/super-admin-auth.guard';
+import { Public } from '../../../core/decorators/public.decorator';
 
 @Controller('posts')
+@UseGuards(SuperAdminAuthGuard)
 export class PostsController {
   constructor(
     private readonly postsService: PostsService,
@@ -37,6 +41,7 @@ export class PostsController {
   }
 
   @Get()
+  @Public()
   findAll(
     @Query() query: GetPostsQueryParamsDto,
   ): Promise<PaginatedViewDto<PostsMapper[]>> {
@@ -44,6 +49,7 @@ export class PostsController {
   }
 
   @Get(':postsId/comments')
+  @Public()
   findCommentsForPost(
     @Param('postsId') postsId: string,
     @Query() query: GetCommentQueryParamsDto,
@@ -56,6 +62,7 @@ export class PostsController {
   }
 
   @Get(':id')
+  @Public()
   findOne(@Param('id') id: string) {
     return this.postQueryService.getPostById(id, null);
   }

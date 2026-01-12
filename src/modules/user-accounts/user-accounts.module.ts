@@ -22,7 +22,7 @@ import { JwtAdapter } from '../../core/adapters/jwt.adapter';
 import { CookieAdapter } from '../../core/adapters/cookie.adapter';
 import { UsersExternalRepository } from './users/repositories/users.external.repository';
 import { PassportModule } from '@nestjs/passport';
-import { JwtModule, JwtService } from '@nestjs/jwt';
+import { JwtService } from '@nestjs/jwt';
 import { JwtStrategy } from './auth/strategies/jwt.strategy';
 import { JwtRefreshStrategy } from './auth/strategies/jwt-refresh.strategy';
 import { SuperAdminStrategy } from './users/strategies/super-admin.strategy';
@@ -55,5 +55,6 @@ import { UsersQueryExternalRepository } from './users/repositories/users.query.e
     JwtRefreshStrategy,
     SuperAdminStrategy,
   ],
+  exports: [UsersExternalRepository],
 })
 export class UserAccountsModule {}

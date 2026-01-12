@@ -1,5 +1,25 @@
-import { Injectable } from '@nestjs/common';
+import { ExecutionContext, Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { Reflector } from '@nestjs/core';
+import { Observable } from 'rxjs';
+import { IS_PUBLIC_KEY } from '../../../../core/decorators/public.decorator';
 
 @Injectable()
-export class SuperAdminAuthGuard extends AuthGuard('basic') {}
+export class SuperAdminAuthGuard extends AuthGuard('basic') {
+  constructor(private readonly reflector: Reflector) {
+    super();
+  }
+
+  canActivate(
+    context: ExecutionContext,
+  ): boolean | Promise<boolean> | Observable<boolean> {
+    const isPublic: boolean = this.reflector.getAllAndOverride<boolean>(
+      IS_PUBLIC_KEY,
+      [context.getHandler(), context.getClass()],
+    );
+
+    if (isPublic) return true;
+
+    return super.canActivate(context);
+  }
+}

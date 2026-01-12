@@ -24,24 +24,10 @@ export class UsersExternalRepository {
     });
   }
 
-  async getUserById(id: string): Promise<UserDocument> {
-    const user: UserDocument | null = await this.UserModel.findOne({
+  async getUserById(id: string): Promise<UserDocument | null> {
+    return this.UserModel.findOne({
       _id: new Types.ObjectId(id),
     });
-
-    if (!user) {
-      throw new DomainException({
-        status: HttpStatus.NOT_FOUND,
-        errorsMessages: [
-          {
-            message: 'User not found',
-            field: 'id',
-          },
-        ],
-      });
-    }
-
-    return user;
   }
 
   async findUserByEmail(email: string): Promise<UserDocument> {
