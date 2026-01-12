@@ -1,4 +1,4 @@
-import { UpdateResult } from 'mongoose';
+import { Types, UpdateResult } from 'mongoose';
 import { UserDocument } from '../../../user-accounts/users/entities/user.entity';
 import { LikeTargetEnum } from '../enums/like-target.enum';
 import { LikeStatusEnum } from '../enums/like-status.enum';
@@ -20,9 +20,9 @@ export class LikesExternalRepository {
   ): Promise<boolean> {
     const result: UpdateResult = await this.LikeModel.updateOne(
       {
-        userId: user._id,
+        userId: new Types.ObjectId(user._id),
         login: user.login,
-        targetId: targetId,
+        targetId: new Types.ObjectId(targetId),
         targetType,
       },
       {

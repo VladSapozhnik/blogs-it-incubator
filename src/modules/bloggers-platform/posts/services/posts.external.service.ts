@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import {
   Post,
   PostDocument,
@@ -9,6 +9,7 @@ import { PostsExternalRepository } from '../repositories/posts.external.reposito
 import { InjectModel } from '@nestjs/mongoose';
 import { BlogsExternalRepository } from '../../blogs/repositories/blogs.external.repository';
 import { CreatePostForBlogDto } from '../dto/create-post-for-blog.dto';
+import { DomainException } from '../../../../core/exceptions/domain-exceptions';
 
 @Injectable()
 export class PostsExternalService {
@@ -35,7 +36,15 @@ export class PostsExternalService {
       await this.postsExternalRepository.createPost(newPost);
 
     if (!postId) {
-      throw new NotFoundException('Failed to create Post');
+      throw new DomainException({
+        status: HttpStatus.NOT_FOUND,
+        errorsMessages: [
+          {
+            message: 'Failed to create Post',
+            field: 'post',
+          },
+        ],
+      });
     }
 
     return postId;

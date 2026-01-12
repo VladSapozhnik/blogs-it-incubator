@@ -5,7 +5,8 @@ import {
 } from '../entities/post.entity';
 import { InjectModel } from '@nestjs/mongoose';
 import { DeleteResult } from 'mongoose';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
+import { DomainException } from '../../../../core/exceptions/domain-exceptions';
 
 @Injectable()
 export class PostsRepository {
@@ -24,7 +25,15 @@ export class PostsRepository {
     });
 
     if (!existPost) {
-      throw new NotFoundException('Failed to update Post');
+      throw new DomainException({
+        status: HttpStatus.NOT_FOUND,
+        errorsMessages: [
+          {
+            message: 'Failed to update Post',
+            field: 'post',
+          },
+        ],
+      });
     }
 
     return existPost;

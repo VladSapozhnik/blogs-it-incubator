@@ -1,8 +1,7 @@
 import { LikeStatusEnum } from '../enums/like-status.enum';
-import { IsEnum, IsNotEmpty } from 'class-validator';
+import { IsEnum } from 'class-validator';
 
 export class UpdateLikeDto {
-  @IsNotEmpty()
   @IsEnum(LikeStatusEnum)
   likeStatus: LikeStatusEnum;
 }

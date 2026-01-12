@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { BlogsRepository } from '../repositories/blogs.repository';
 import {
   Blog,
@@ -8,6 +8,7 @@ import {
 import { UpdateBlogDto } from '../dto/update-blog.dto';
 import { CreateBlogDto } from '../dto/create-blog.dto';
 import { InjectModel } from '@nestjs/mongoose';
+import { DomainException } from '../../../../core/exceptions/domain-exceptions';
 
 @Injectable()
 export class BlogsService {
@@ -22,7 +23,15 @@ export class BlogsService {
     const blogId: string = await this.blogsRepository.createBlog(newBlog);
 
     if (!blogId) {
-      throw new BadRequestException('Failed to create blog');
+      throw new DomainException({
+        status: HttpStatus.BAD_REQUEST,
+        errorsMessages: [
+          {
+            message: 'Failed to create blog',
+            field: 'blog',
+          },
+        ],
+      });
     }
 
     return blogId;

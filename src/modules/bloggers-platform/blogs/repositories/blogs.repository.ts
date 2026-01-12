@@ -1,10 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import {
   Blog,
   BlogDocument,
   type BlogModelType,
 } from '../entities/blog.entity';
+import { DomainException } from '../../../../core/exceptions/domain-exceptions';
 
 @Injectable()
 export class BlogsRepository {
@@ -16,7 +17,15 @@ export class BlogsRepository {
     });
 
     if (!existBlog) {
-      throw new NotFoundException('Blog not found');
+      throw new DomainException({
+        status: HttpStatus.NOT_FOUND,
+        errorsMessages: [
+          {
+            message: 'Blog not found',
+            field: 'blog',
+          },
+        ],
+      });
     }
 
     return existBlog;

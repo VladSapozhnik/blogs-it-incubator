@@ -5,8 +5,9 @@ import {
   type PostModelType,
 } from '../entities/post.entity';
 import { GetPostsQueryParamsDto } from '../dto/post-query-input.dto';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { Types } from 'mongoose';
+import { DomainException } from '../../../../core/exceptions/domain-exceptions';
 
 @Injectable()
 export class PostsQueryExternalRepository {
@@ -38,7 +39,15 @@ export class PostsQueryExternalRepository {
     });
 
     if (!existPost) {
-      throw new NotFoundException(`Post with id ${id} not found`);
+      throw new DomainException({
+        status: HttpStatus.NOT_FOUND,
+        errorsMessages: [
+          {
+            message: 'Post with id ${id} not found',
+            field: 'post',
+          },
+        ],
+      });
     }
 
     return existPost;

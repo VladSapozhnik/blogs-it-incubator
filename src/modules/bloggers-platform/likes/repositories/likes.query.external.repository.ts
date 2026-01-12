@@ -7,6 +7,7 @@ import {
 } from '../entities/like.entity';
 import { Injectable } from '@nestjs/common';
 import { LikeStatusEnum } from '../enums/like-status.enum';
+import { Types } from 'mongoose';
 
 @Injectable()
 export class LikesQueryExternalRepository {
@@ -20,12 +21,12 @@ export class LikesQueryExternalRepository {
   ) {
     const [likesCount, dislikesCount] = await Promise.all([
       this.LikeModel.countDocuments({
-        targetId,
+        targetId: new Types.ObjectId(targetId),
         targetType,
         status: LikeStatusEnum.Like,
       }),
       this.LikeModel.countDocuments({
-        targetId,
+        targetId: new Types.ObjectId(targetId),
         targetType,
         status: LikeStatusEnum.Dislike,
       }),
@@ -43,8 +44,8 @@ export class LikesQueryExternalRepository {
     targetType: LikeTargetEnum,
   ): Promise<LikeDocument | null> {
     return this.LikeModel.findOne({
-      userId: userId,
-      targetId: targetId,
+      userId: new Types.ObjectId(userId),
+      targetId: new Types.ObjectId(targetId),
       targetType,
     });
   }
@@ -55,7 +56,7 @@ export class LikesQueryExternalRepository {
     likeCounts: number = 3,
   ): Promise<LikeDocument[]> {
     return this.LikeModel.find({
-      targetId,
+      targetId: new Types.ObjectId(targetId),
       targetType,
       status: LikeStatusEnum.Like,
     })

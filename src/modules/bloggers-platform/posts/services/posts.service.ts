@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePostDto } from '../dto/create-post.dto';
 import { UpdatePostDto } from '../dto/update-post.dto';
 import { BlogDocument } from '../../blogs/entities/blog.entity';
@@ -14,6 +10,7 @@ import {
 } from '../entities/post.entity';
 import { BlogsExternalRepository } from '../../blogs/repositories/blogs.external.repository';
 import { InjectModel } from '@nestjs/mongoose';
+import { DomainException } from '../../../../core/exceptions/domain-exceptions';
 
 @Injectable()
 export class PostsService {
@@ -33,7 +30,15 @@ export class PostsService {
     const postId: string = await this.postsRepository.createPost(newPost);
 
     if (!postId) {
-      throw new BadRequestException('Failed to create Post');
+      throw new DomainException({
+        status: HttpStatus.BAD_REQUEST,
+        errorsMessages: [
+          {
+            message: 'Failed to create Post',
+            field: 'post',
+          },
+        ],
+      });
     }
 
     return postId;
@@ -54,12 +59,9 @@ export class PostsService {
   }
 
   async removePost(id: string) {
-    const existPost: PostDocument | null =
-      await this.postsRepository.findPostById(id.toString());
-
-    if (!existPost) {
-      throw new NotFoundException('Failed to delete Post');
-    }
+    const existPost: PostDocument = await this.postsRepository.findPostById(
+      id.toString(),
+    );
 
     await this.postsRepository.removePost(existPost);
   }

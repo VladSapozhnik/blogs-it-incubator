@@ -31,7 +31,7 @@ import { LikesExternalService } from '../likes/services/likes.external.service';
 import { UpdateLikeDto } from '../likes/dto/update-like.dto';
 
 @Controller('posts')
-@UseGuards(SuperAdminAuthGuard)
+// @UseGuards(SuperAdminAuthGuard)
 export class PostsController {
   constructor(
     private readonly postsService: PostsService,
@@ -47,7 +47,7 @@ export class PostsController {
   async makeStatus(
     @Param('postId') postId: string,
     @User('userId') userId: string,
-    dto: UpdateLikeDto,
+    @Body() dto: UpdateLikeDto,
   ) {
     return this.likesExternalService.updatePostLikeStatus(userId, postId, dto);
   }
