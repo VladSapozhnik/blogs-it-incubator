@@ -29,7 +29,7 @@ import { OptionalJwtAuthGuard } from '../../../core/guards/optional-jwt-auth.gua
 import { User } from '../../user-accounts/auth/decorator/user.decorator';
 
 @Controller('blogs')
-@UseGuards(SuperAdminAuthGuard)
+@UseGuards(SuperAdminAuthGuard, OptionalJwtAuthGuard)
 export class BlogsController {
   constructor(
     private readonly blogsService: BlogsService,
@@ -54,7 +54,6 @@ export class BlogsController {
 
   @Get(':blogId/posts')
   @Public()
-  @UseGuards(OptionalJwtAuthGuard)
   findAllPostByBlogId(
     @User('userId') userId: string,
     @Param('blogId') blogId: string,
@@ -69,6 +68,7 @@ export class BlogsController {
 
   @Post(':blogId/posts')
   async createPostForBlog(
+    @User('userId') userId: string,
     @Param('blogId') blogId: string,
     @Body() createBlogDto: CreatePostForBlogDto,
   ): Promise<PostsMapper> {
@@ -77,7 +77,7 @@ export class BlogsController {
       blogId,
     );
 
-    return this.postsQueryExternalService.getPostById(id, null);
+    return this.postsQueryExternalService.getPostById(id, userId);
   }
 
   @Get(':id')
