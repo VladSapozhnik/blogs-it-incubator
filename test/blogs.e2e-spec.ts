@@ -9,6 +9,7 @@ import { errorMessageHelper } from './ helpers/error-message.helper';
 import { constantHelper } from './ helpers/constant.helper';
 import { createStringHelper } from './ helpers/create-string.helper';
 import { BlogsMapper } from '../src/modules/bloggers-platform/blogs/mappers/blogs.mapper';
+import { getAllForPaginationHelper } from './ helpers/get-all-for-pagination.helper';
 
 describe('BlogsController (e2e)', () => {
   let app: INestApplication<App>;
@@ -58,6 +59,17 @@ describe('BlogsController (e2e)', () => {
   afterAll(async () => {
     await app.close();
   });
+
+  describe('GET /blogs', () => {
+    it('/blogs (GET) should return all blogs with correct pagination', async () => {
+      const response = await request(app.getHttpServer())
+        .get('/blogs')
+        .expect(HttpStatus.OK);
+
+      expect(response.body).toEqual(getAllForPaginationHelper(response));
+    });
+  });
+
   describe('POST /blogs create blog', () => {
     it('/blogs (POST) should return 400 when creating a blog with empty name, description, and websiteUrl', async () => {
       const response = await request(app.getHttpServer())
