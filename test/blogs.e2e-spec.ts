@@ -59,7 +59,7 @@ describe('BlogsController (e2e)', () => {
     await app.close();
   });
   describe('POST /blogs create blog', () => {
-    it('/posts (POST) should return 400 when creating a blog with empty name, description, and websiteUrl', async () => {
+    it('/blogs (POST) should return 400 when creating a blog with empty name, description, and websiteUrl', async () => {
       const response = await request(app.getHttpServer())
         .post('/blogs')
         .auth(constantHelper.superAdmin.user, constantHelper.superAdmin.pass)
@@ -73,7 +73,7 @@ describe('BlogsController (e2e)', () => {
       expect(response.body).toEqual(errorMessageHelper(3));
     });
 
-    it('/posts (POST) should return 400 when creating a blog with name, description, or websiteUrl exceeding max length', async () => {
+    it('/blogs (POST) should return 400 when creating a blog with name, description, or websiteUrl exceeding max length', async () => {
       const response = await request(app.getHttpServer())
         .post('/blogs')
         .auth(constantHelper.superAdmin.user, constantHelper.superAdmin.pass)
@@ -87,7 +87,7 @@ describe('BlogsController (e2e)', () => {
       expect(response.body).toEqual(errorMessageHelper(3));
     });
 
-    it('/posts (POST) should return 401 when using invalid super admin credentials', async () => {
+    it('/blogs (POST) should return 401 when using invalid super admin credentials', async () => {
       const response = await request(app.getHttpServer())
         .post('/blogs')
         .auth(
@@ -104,7 +104,7 @@ describe('BlogsController (e2e)', () => {
       expect(response.body).toEqual(errorMessageHelper());
     });
 
-    it('/posts (POST) should create a blog successfully even with unusual but valid websiteUrl', async () => {
+    it('/blogs (POST) should create a blog successfully even with unusual but valid websiteUrl', async () => {
       const response = await request(app.getHttpServer())
         .post('/blogs')
         .auth(constantHelper.superAdmin.user, constantHelper.superAdmin.pass)
@@ -121,7 +121,7 @@ describe('BlogsController (e2e)', () => {
   });
 
   describe('GET /blogs get one blog', () => {
-    it('should return a blog by ID when the blog exists', async () => {
+    it('/blogs (GET) should return a blog by ID when the blog exists', async () => {
       const response = await request(app.getHttpServer())
         .get('/blogs/' + blogId)
         .expect(HttpStatus.OK);
@@ -129,7 +129,7 @@ describe('BlogsController (e2e)', () => {
       expect(response.body).toEqual(responseBlogExample);
     });
 
-    it('should return 404 when trying to get a blog with a non-existing ID', async () => {
+    it('/blogs (GET) should return 404 when trying to get a blog with a non-existing ID', async () => {
       const response = await request(app.getHttpServer())
         .get('/blogs/' + constantHelper.invalidId)
         .expect(HttpStatus.NOT_FOUND);
@@ -138,8 +138,8 @@ describe('BlogsController (e2e)', () => {
     });
   });
 
-  describe('GET /blogs update blog', () => {
-    it('should return 400 when updating a blog with empty name, description, and websiteUrl', async () => {
+  describe('PUT /blogs update blog', () => {
+    it('/blogs (PUT) should return 400 when updating a blog with empty name, description, and websiteUrl', async () => {
       const response = await request(app.getHttpServer())
         .put('/blogs/' + blogId)
         .auth(constantHelper.superAdmin.user, constantHelper.superAdmin.pass)
@@ -153,7 +153,7 @@ describe('BlogsController (e2e)', () => {
       expect(response.body).toEqual(errorMessageHelper(3));
     });
 
-    it('should return 400 when updating a blog with fields exceeding max length or invalid URL', async () => {
+    it('/blogs (PUT) should return 400 when updating a blog with fields exceeding max length or invalid URL', async () => {
       const response = await request(app.getHttpServer())
         .put('/blogs/' + blogId)
         .auth(constantHelper.superAdmin.user, constantHelper.superAdmin.pass)
@@ -167,7 +167,7 @@ describe('BlogsController (e2e)', () => {
       expect(response.body).toEqual(errorMessageHelper(3));
     });
 
-    it('should return 401 when updating a blog with invalid super admin credentials', async () => {
+    it('/blogs (PUT) should return 401 when updating a blog with invalid super admin credentials', async () => {
       const response = await request(app.getHttpServer())
         .put('/blogs/' + blogId)
         .auth(
@@ -185,7 +185,7 @@ describe('BlogsController (e2e)', () => {
       expect(response.body).toEqual(errorMessageHelper());
     });
 
-    it('should return 404 when updating a blog that does not exist', async () => {
+    it('/blogs (PUT) should return 404 when updating a blog that does not exist', async () => {
       const response = await request(app.getHttpServer())
         .put('/blogs/' + constantHelper.invalidId)
         .auth(constantHelper.superAdmin.user, constantHelper.superAdmin.pass)
@@ -200,7 +200,7 @@ describe('BlogsController (e2e)', () => {
       expect(response.body).toEqual(errorMessageHelper());
     });
 
-    it('should successfully update a blog with valid data', async () => {
+    it('/blogs (PUT) should successfully update a blog with valid data', async () => {
       await request(app.getHttpServer())
         .put('/blogs/' + blogId)
         .auth(constantHelper.superAdmin.user, constantHelper.superAdmin.pass)
@@ -210,6 +210,36 @@ describe('BlogsController (e2e)', () => {
           websiteUrl:
             'https://-Pd5J4cMUMlF3DsJSV0.dFT3ccLBO7qhh3Ck2ISs4tHhqLv1vy0p2PbcVzazIhRIxhRKVZY.YtEH.E_Ct9FU5',
         })
+        .expect(HttpStatus.NO_CONTENT);
+    });
+  });
+
+  describe('DELETE /blogs update blog', () => {
+    it('/blogs (DELETE) should return 401 when trying to delete a blog with invalid super admin credentials', async () => {
+      const response = await request(app.getHttpServer())
+        .delete('/blogs/' + blogId)
+        .auth(
+          constantHelper.invalidSuperAdmin.user,
+          constantHelper.invalidSuperAdmin.pass,
+        )
+        .expect(HttpStatus.UNAUTHORIZED);
+
+      expect(response.body).toEqual(errorMessageHelper());
+    });
+
+    it('/blogs (DELETE) should return 404 when trying to delete a blog that does not exist', async () => {
+      const response = await request(app.getHttpServer())
+        .delete('/blogs/' + constantHelper.invalidId)
+        .auth(constantHelper.superAdmin.user, constantHelper.superAdmin.pass)
+        .expect(HttpStatus.NOT_FOUND);
+
+      expect(response.body).toEqual(errorMessageHelper());
+    });
+
+    it('/blogs (DELETE) should successfully delete a blog with valid credentials', async () => {
+      await request(app.getHttpServer())
+        .delete('/blogs/' + blogId)
+        .auth(constantHelper.superAdmin.user, constantHelper.superAdmin.pass)
         .expect(HttpStatus.NO_CONTENT);
     });
   });
