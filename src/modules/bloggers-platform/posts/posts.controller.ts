@@ -22,14 +22,15 @@ import { GetCommentQueryParamsDto } from '../comments/dto/comment-query-input.dt
 import { CommentsQueryExternalService } from '../comments/services/comments.query.external.service';
 import { CommentsMapper } from '../comments/mappers/comments.mapper';
 import { SuperAdminAuthGuard } from '../../user-accounts/users/guards/super-admin-auth.guard';
-import { Public } from '../../../core/decorators/public.decorator';
 import { CommentsExternalService } from '../comments/services/comments.external.service';
 import { CreateCommentDto } from '../comments/dto/create-comment.dto';
 import { User } from '../../user-accounts/auth/decorator/user.decorator';
 import { JwtAuthGuard } from '../../user-accounts/auth/guards/jwt-auth.guard';
 import { LikesExternalService } from '../likes/services/likes.external.service';
 import { UpdateLikeDto } from '../likes/dto/update-like.dto';
+import { OptionalJwtAuthGuard } from '../../../core/guards/optional-jwt-auth.guard';
 
+@UseGuards(OptionalJwtAuthGuard)
 @Controller('posts')
 export class PostsController {
   constructor(
@@ -51,32 +52,36 @@ export class PostsController {
     return this.likesExternalService.updatePostLikeStatus(userId, postId, dto);
   }
 
-  @UseGuards(SuperAdminAuthGuard)
+  @UseGuards(SuperAdminAuthGuard, OptionalJwtAuthGuard)
   @Post()
-  async create(@Body() createPostDto: CreatePostDto): Promise<PostsMapper> {
+  async create(
+    @User('userId') userId: string,
+    @Body() createPostDto: CreatePostDto,
+  ): Promise<PostsMapper> {
     const id: string = await this.postsService.createPost(createPostDto);
 
-    return this.postQueryService.getPostById(id, null);
+    return this.postQueryService.getPostById(id, userId);
   }
 
-  @Public()
   @Get()
   findAll(
+    @User('userId') userId: string,
     @Query() query: GetPostsQueryParamsDto,
   ): Promise<PaginatedViewDto<PostsMapper[]>> {
-    return this.postQueryService.getPosts(query, null);
+    console.log(userId);
+    return this.postQueryService.getPosts(query, userId);
   }
 
-  @Public()
   @Get(':postId/comments')
   findCommentsForPost(
+    @User('userId') userId: string,
     @Param('postId') postsId: string,
     @Query() query: GetCommentQueryParamsDto,
   ): Promise<PaginatedViewDto<CommentsMapper[]>> {
     return this.commentsQueryExternalService.getCommentsByPostId(
       query,
       postsId,
-      null,
+      userId,
     );
   }
 
@@ -86,7 +91,7 @@ export class PostsController {
     @Param('postId') postsId: string,
     @User('userId') userId: string,
     @Body() createCommentDto: CreateCommentDto,
-  ) {
+  ): Promise<CommentsMapper> {
     const commentId: string = await this.commentsExternalService.createComment(
       userId,
       postsId,
@@ -96,10 +101,9 @@ export class PostsController {
     return this.commentsQueryExternalService.getCommentById(commentId, userId);
   }
 
-  @Public()
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.postQueryService.getPostById(id, null);
+  findOne(@User('userId') userId: string, @Param('id') id: string) {
+    return this.postQueryService.getPostById(id, userId);
   }
 
   @UseGuards(SuperAdminAuthGuard)

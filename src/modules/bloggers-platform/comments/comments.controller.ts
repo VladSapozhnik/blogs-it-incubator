@@ -18,8 +18,9 @@ import { UpdateCommentDto } from './dto/update-comment.dto';
 import { User } from '../../user-accounts/auth/decorator/user.decorator';
 import { LikesExternalService } from '../likes/services/likes.external.service';
 import { UpdateLikeDto } from '../likes/dto/update-like.dto';
+import { OptionalJwtAuthGuard } from '../../../core/guards/optional-jwt-auth.guard';
 
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, OptionalJwtAuthGuard)
 @Controller('comments')
 export class CommentsController {
   constructor(
@@ -44,8 +45,11 @@ export class CommentsController {
 
   @Get(':id')
   @Public()
-  findOne(@Param('id') id: string): Promise<CommentsMapper> {
-    return this.commentsQueryService.getCommentById(id, null);
+  findOne(
+    @User('userId') userId: string,
+    @Param('id') id: string,
+  ): Promise<CommentsMapper> {
+    return this.commentsQueryService.getCommentById(id, userId);
   }
 
   @Put(':commentId')
@@ -55,7 +59,7 @@ export class CommentsController {
     @Body() updateComment: UpdateCommentDto,
     @Param('commentId') commentId: string,
   ) {
-    return this.commentsService.updateComment(commentId, userId, updateComment);
+    return this.commentsService.updateComment(userId, commentId, updateComment);
   }
 
   @Delete(':commentId')
@@ -64,6 +68,6 @@ export class CommentsController {
     @User('userId') userId: string,
     @Param('commentId') commentId: string,
   ) {
-    return this.commentsService.removeComment(commentId, userId);
+    return this.commentsService.removeComment(userId, commentId);
   }
 }

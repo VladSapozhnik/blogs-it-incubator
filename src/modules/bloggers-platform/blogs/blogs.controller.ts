@@ -25,6 +25,8 @@ import { PostsExternalService } from '../posts/services/posts.external.service';
 import { CreatePostForBlogDto } from '../posts/dto/create-post-for-blog.dto';
 import { SuperAdminAuthGuard } from '../../user-accounts/users/guards/super-admin-auth.guard';
 import { Public } from '../../../core/decorators/public.decorator';
+import { OptionalJwtAuthGuard } from '../../../core/guards/optional-jwt-auth.guard';
+import { User } from '../../user-accounts/auth/decorator/user.decorator';
 
 @Controller('blogs')
 @UseGuards(SuperAdminAuthGuard)
@@ -52,13 +54,15 @@ export class BlogsController {
 
   @Get(':blogId/posts')
   @Public()
+  @UseGuards(OptionalJwtAuthGuard)
   findAllPostByBlogId(
+    @User('userId') userId: string,
     @Param('blogId') blogId: string,
     @Query() query: GetPostsQueryParamsDto,
   ): Promise<PaginatedViewDto<PostsMapper[]>> {
     return this.postsQueryExternalService.getAllPostsForBlog(
       query,
-      null,
+      userId,
       blogId,
     );
   }
