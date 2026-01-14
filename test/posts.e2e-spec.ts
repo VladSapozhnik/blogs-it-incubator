@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { HttpStatus, INestApplication } from '@nestjs/common';
-import request, { Response } from 'supertest';
+import request from 'supertest';
 import { App } from 'supertest/types';
 import { AppModule } from '../src/app.module';
 import { appSetup } from '../src/setup/app.setup';
@@ -10,6 +10,7 @@ import { constantHelper } from './ helpers/constant.helper';
 import { createStringHelper } from './ helpers/create-string.helper';
 import { BlogsMapper } from '../src/modules/bloggers-platform/blogs/mappers/blogs.mapper';
 import { PostsMapper } from '../src/modules/bloggers-platform/posts/mappers/blogs.mapper';
+import { getAllForPaginationHelper } from './ helpers/get-all-for-pagination.helper';
 
 describe('PostsController (e2e)', () => {
   let app: INestApplication<App>;
@@ -85,15 +86,114 @@ describe('PostsController (e2e)', () => {
     await app.close();
   });
 
-  // describe('GET /posts', () => {
-  //   it('/posts (GET) should', async () => {
-  //     const response = await request(app.getHttpServer())
-  //       .get('/posts')
-  //       .expect(HttpStatus.OK);
-  //
-  //     expect(response.body).toEqual(getAllForPaginationHelper(response));
-  //   });
-  // });
+  describe('GET /posts', () => {
+    it('/posts (GET) should return all posts with pagination', async () => {
+      const response = await request(app.getHttpServer())
+        .get('/posts')
+        .expect(HttpStatus.OK);
+
+      expect(response.body).toEqual(getAllForPaginationHelper(response));
+    });
+  });
+
+  describe('GET /blogs/blogId/posts', () => {
+    it('/posts (GET) return all posts for specific blog with pagination', async () => {
+      const response = await request(app.getHttpServer())
+        .get(`/blogs/${blogId}/posts/`)
+        .expect(HttpStatus.OK);
+
+      expect(response.body).toEqual(getAllForPaginationHelper(response));
+    });
+  });
+
+  describe('POST /blogs/blogId/posts create posts', () => {
+    it('/blogs/blogId/posts (POST) should return 400 when all fields are empty', async () => {
+      const response = await request(app.getHttpServer())
+        .post(`/blogs/${blogId}/posts/`)
+        .auth(constantHelper.superAdmin.user, constantHelper.superAdmin.pass)
+        .send({
+          title: '',
+          shortDescription: '',
+          content: '',
+        })
+        .expect(HttpStatus.BAD_REQUEST);
+
+      expect(response.body).toEqual(errorMessageHelper(3));
+    });
+
+    it('/blogs/blogId/posts (POST) should return 400 when fields exceed max length', async () => {
+      const response = await request(app.getHttpServer())
+        .post(`/blogs/${blogId}/posts/`)
+        .auth(constantHelper.superAdmin.user, constantHelper.superAdmin.pass)
+        .send({
+          title: createStringHelper(31),
+          shortDescription: createStringHelper(111),
+          content: createStringHelper(1031),
+        })
+        .expect(HttpStatus.BAD_REQUEST);
+
+      expect(response.body).toEqual(errorMessageHelper(3));
+    });
+
+    it('/blogs/blogId/posts (POST) should return 400 when fields contain only whitespace', async () => {
+      const response = await request(app.getHttpServer())
+        .post(`/blogs/${blogId}/posts/`)
+        .auth(constantHelper.superAdmin.user, constantHelper.superAdmin.pass)
+        .send({
+          title: ' ',
+          shortDescription: ' ',
+          content: ' ',
+        })
+        .expect(HttpStatus.BAD_REQUEST);
+
+      expect(response.body).toEqual(errorMessageHelper(3));
+    });
+
+    it('/blogs/blogId/posts (POST) should return 404 when blogId does not exist', async () => {
+      const response = await request(app.getHttpServer())
+        .post(`/blogs/${constantHelper.invalidId}/posts/`)
+        .auth(constantHelper.superAdmin.user, constantHelper.superAdmin.pass)
+        .send({
+          title: createStringHelper(11),
+          shortDescription: createStringHelper(31),
+          content: createStringHelper(31),
+        })
+        .expect(HttpStatus.NOT_FOUND);
+
+      expect(response.body).toEqual(errorMessageHelper());
+    });
+
+    it('/blogs/blogId/posts (POST) should return 401 when user credentials are invalid', async () => {
+      const response = await request(app.getHttpServer())
+        .post(`/blogs/${blogId}/posts/`)
+        .auth(
+          constantHelper.invalidSuperAdmin.user,
+          constantHelper.invalidSuperAdmin.pass,
+        )
+        .send({
+          title: createStringHelper(11),
+          shortDescription: createStringHelper(31),
+          content: createStringHelper(31),
+        })
+        .expect(HttpStatus.UNAUTHORIZED);
+
+      expect(response.body).toEqual(errorMessageHelper());
+    });
+
+    it('/blogs/blogId/posts (POST) should create a post successfully with valid data', async () => {
+      const response = await request(app.getHttpServer())
+        .post(`/blogs/${blogId}/posts/`)
+        .auth(constantHelper.superAdmin.user, constantHelper.superAdmin.pass)
+        .send({
+          title: createStringHelper(11),
+          shortDescription: createStringHelper(31),
+          content: createStringHelper(31),
+        })
+        .expect(HttpStatus.CREATED);
+
+      expect(response.body).toEqual(responsePostExample);
+    });
+  });
 
   describe('POST /posts create posts', () => {
     it('/posts (POST) should return 400 if all fields are empty', async () => {
