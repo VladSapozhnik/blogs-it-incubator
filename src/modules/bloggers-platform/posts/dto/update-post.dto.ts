@@ -14,11 +14,12 @@ export class UpdatePostDto {
   @MaxLength(100)
   @Trim()
   shortDescription: string;
+  @Trim()
   @IsNotEmpty()
   @IsString()
   @MaxLength(1000)
-  @Trim()
   content: string;
+  @Trim()
   @IsNotEmpty()
   @IsString()
   blogId: Types.ObjectId;

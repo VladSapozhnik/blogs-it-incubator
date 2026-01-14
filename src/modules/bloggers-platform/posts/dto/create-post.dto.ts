@@ -18,6 +18,7 @@ export class CreatePostDto {
   @IsString()
   @MaxLength(1000)
   content: string;
+  @Trim()
   @IsNotEmpty()
   @IsString()
   blogId: Types.ObjectId;
