@@ -6,12 +6,15 @@ import { LikesInfoOutputType } from '../../likes/types/likes-info-output.type';
 import { CommentsQueryExternalRepository } from '../repositories/comments.query.external.repository';
 import { PaginatedViewDto } from '../../../../core/dto/base.paginated.view.dto';
 import { GetCommentQueryParamsDto } from '../dto/comment-query-input.dto';
+import { PostsExternalService } from '../../posts/services/posts.external.service';
+import { PostsExternalRepository } from '../../posts/repositories/posts.external.repository';
 
 @Injectable()
 export class CommentsQueryExternalService {
   constructor(
     private readonly commentsQueryExternalRepository: CommentsQueryExternalRepository,
     private readonly likesQueryExternalServices: LikesQueryExternalService,
+    private readonly postsExternalRepository: PostsExternalRepository,
   ) {}
 
   async getCommentsByPostId(
@@ -19,6 +22,8 @@ export class CommentsQueryExternalService {
     postId: string,
     userId: string | null,
   ): Promise<PaginatedViewDto<CommentsMapper[]>> {
+    await this.postsExternalRepository.findPostById(postId);
+
     const { comments, totalCount } =
       await this.commentsQueryExternalRepository.getCommentsByPostId(
         queryDto,
