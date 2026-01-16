@@ -30,8 +30,20 @@ import { UsersQueryExternalRepository } from './users/repositories/users.query.e
 import { RegistrationUseCase } from './auth/application/usecases/registration.usecase';
 import { LoginUseCase } from './auth/application/usecases/login.usecase';
 import { ConfirmEmailUseCase } from './auth/application/usecases/confirm-email.usecase';
+import { NewPasswordUseCase } from './auth/application/usecases/new-password.usecase';
+import { PasswordRecoveryUseCase } from './auth/application/usecases/password-recovery.usecase';
+import { ResendEmailUseCase } from './auth/application/usecases/resend-email.usecase';
+import { RefreshTokenUseCase } from './auth/application/usecases/refresh-token.usecase';
 
-const useCases = [RegistrationUseCase, LoginUseCase, ConfirmEmailUseCase];
+const useCases = [
+  RegistrationUseCase,
+  LoginUseCase,
+  ConfirmEmailUseCase,
+  NewPasswordUseCase,
+  PasswordRecoveryUseCase,
+  ResendEmailUseCase,
+  RefreshTokenUseCase,
+];
 
 @Module({
   imports: [

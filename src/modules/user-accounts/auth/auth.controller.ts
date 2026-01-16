@@ -26,12 +26,14 @@ import { RegistrationCommand } from './application/usecases/registration.usecase
 import { LoginCommand } from './application/usecases/login.usecase';
 import { AccessAndRefreshTokensType } from './types/access-and-refresh-tokens.type';
 import { ConfirmEmailCommand } from './application/usecases/confirm-email.usecase';
+import { NewPasswordCommand } from './application/usecases/new-password.usecase';
+import { PasswordRecoveryCommand } from './application/usecases/password-recovery.usecase';
+import { ResendEmailCommand } from './application/usecases/resend-email.usecase';
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private readonly commandBus: CommandBus,
-    private readonly authService: AuthService,
     private readonly cookieAdapter: CookieAdapter,
     private readonly userQueryExternalRepository: UsersQueryExternalRepository,
   ) {}
@@ -57,13 +59,17 @@ export class AuthController {
   @Post('password-recovery')
   @HttpCode(HttpStatus.NO_CONTENT)
   async passwordRecovery(@Body() passwordRecoveryDto: PasswordRecoveryDto) {
-    await this.authService.passwordRecovery(passwordRecoveryDto.email);
+    await this.commandBus.execute<PasswordRecoveryCommand, void>(
+      new PasswordRecoveryCommand(passwordRecoveryDto.email),
+    );
   }
 
   @Post('new-password')
   @HttpCode(HttpStatus.NO_CONTENT)
   async newPassword(@Body() newPasswordDto: NewPasswordDto) {
-    await this.authService.newPassword(newPasswordDto);
+    await this.commandBus.execute<NewPasswordCommand, void>(
+      new NewPasswordCommand(newPasswordDto),
+    );
   }
 
   @Post('registration-confirmation')
@@ -87,7 +93,9 @@ export class AuthController {
   async registrationEmailResending(
     @Body() registrationEmailResendingDto: RegistrationEmailResendingDto,
   ) {
-    await this.authService.resendEmail(registrationEmailResendingDto.email);
+    await this.commandBus.execute<ResendEmailCommand, void>(
+      new ResendEmailCommand(registrationEmailResendingDto.email),
+    );
   }
 
   @UseGuards(JwtAuthGuard)
