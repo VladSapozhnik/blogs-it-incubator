@@ -21,10 +21,16 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { UsersQueryExternalRepository } from '../users/repositories/users.query.external.repository';
 import { ProfileMapper } from './mappers/profile.mapper';
 import { User } from './decorator/user.decorator';
+import { CommandBus } from '@nestjs/cqrs';
+import { RegistrationCommand } from './application/usecases/registration.usecase';
+import { LoginCommand } from './application/usecases/login.usecase';
+import { AccessAndRefreshTokensType } from './types/access-and-refresh-tokens.type';
+import { ConfirmEmailCommand } from './application/usecases/confirm-email.usecase';
 
 @Controller('auth')
 export class AuthController {
   constructor(
+    private readonly commandBus: CommandBus,
     private readonly authService: AuthService,
     private readonly cookieAdapter: CookieAdapter,
     private readonly userQueryExternalRepository: UsersQueryExternalRepository,
@@ -35,9 +41,11 @@ export class AuthController {
   async login(
     @Res({ passthrough: true }) res: Response,
     @Body() loginDto: LoginDto,
-  ) {
-    const { accessToken, refreshToken } =
-      await this.authService.login(loginDto);
+  ): Promise<{ accessToken: string }> {
+    const { accessToken, refreshToken } = await this.commandBus.execute<
+      LoginCommand,
+      AccessAndRefreshTokensType
+    >(new LoginCommand(loginDto));
 
     this.cookieAdapter.setRefreshCookie(res, refreshToken);
 
@@ -60,16 +68,18 @@ export class AuthController {
 
   @Post('registration-confirmation')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async registrationConfirmation(
-    @Body() registrationConfirmationCodeDto: RegistrationConfirmationCodeDto,
-  ) {
-    await this.authService.confirmEmail(registrationConfirmationCodeDto.code);
+  async registrationConfirmation(@Body() dto: RegistrationConfirmationCodeDto) {
+    await this.commandBus.execute<ConfirmEmailCommand, void>(
+      new ConfirmEmailCommand(dto.code),
+    );
   }
 
   @Post('registration')
   @HttpCode(HttpStatus.NO_CONTENT)
   async create(@Body() registrationDto: RegistrationDto) {
-    await this.authService.registration(registrationDto);
+    await this.commandBus.execute<RegistrationCommand, void>(
+      new RegistrationCommand(registrationDto),
+    );
   }
 
   @Post('registration-email-resending')

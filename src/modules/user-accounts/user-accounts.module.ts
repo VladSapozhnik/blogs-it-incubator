@@ -27,6 +27,11 @@ import { JwtStrategy } from './auth/strategies/jwt.strategy';
 import { JwtRefreshStrategy } from './auth/strategies/jwt-refresh.strategy';
 import { SuperAdminStrategy } from './users/strategies/super-admin.strategy';
 import { UsersQueryExternalRepository } from './users/repositories/users.query.external.repository';
+import { RegistrationUseCase } from './auth/application/usecases/registration.usecase';
+import { LoginUseCase } from './auth/application/usecases/login.usecase';
+import { ConfirmEmailUseCase } from './auth/application/usecases/confirm-email.usecase';
+
+const useCases = [RegistrationUseCase, LoginUseCase, ConfirmEmailUseCase];
 
 @Module({
   imports: [
@@ -39,6 +44,7 @@ import { UsersQueryExternalRepository } from './users/repositories/users.query.e
   ],
   controllers: [UsersController, AuthController],
   providers: [
+    ...useCases,
     JwtService,
     UsersService,
     UsersRepository,

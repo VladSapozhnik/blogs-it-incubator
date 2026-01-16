@@ -75,11 +75,6 @@ export class UsersExternalRepository {
     return user._id.toString();
   }
 
-  async createUser(user: UserDocument): Promise<string> {
-    const result: UserDocument = await user.save();
-    return result._id.toString();
-  }
-
   async removeUser(user: UserDocument) {
     await user.deleteOne();
   }

@@ -1,7 +1,5 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { RegistrationDto } from './dto/registration.dto';
 import { HashAdapter } from '../../../core/adapters/hash.adapter';
-import { randomUUID } from 'node:crypto';
 import { generateId } from '../../../core/helpers/generate-id';
 import {
   User,
@@ -13,7 +11,6 @@ import { add } from 'date-fns/add';
 import { EmailAdapter } from '../../../core/adapters/email.adapter';
 import { emailExamples } from '../../../core/adapters/email.examples';
 import { UsersExternalRepository } from '../users/repositories/users.external.repository';
-import { LoginDto } from './dto/login.dto';
 import { AccessAndRefreshTokensType } from './types/access-and-refresh-tokens.type';
 import { PasswordRecoveryExternalRepository } from '../password-recovery/password-recovery.external.repository';
 import {
@@ -38,110 +35,6 @@ export class AuthService {
     private readonly jwtAdapter: JwtAdapter,
     private readonly emailAdapter: EmailAdapter,
   ) {}
-
-  async registration(dto: RegistrationDto) {
-    const hash: string = await this.hashAdapter.hashPassword(dto.password);
-
-    const randomUUID: string = generateId();
-
-    const newUser: UserDocument = this.UserModel.createInstance(dto, hash, {
-      confirmationCode: randomUUID,
-      expirationDate: add(new Date(), {
-        hours: 1,
-        minutes: 30,
-      }),
-      isConfirmed: false,
-    });
-
-    const isUser: UserDocument | null =
-      await this.usersExternalRepository.getUserByLoginOrEmail(
-        dto.login,
-        dto.email,
-      );
-
-    if (isUser) {
-      if (isUser.login === dto.login) {
-        throw new DomainException({
-          status: HttpStatus.BAD_REQUEST,
-          errorsMessages: [
-            {
-              message: 'Login already exists',
-              field: 'login',
-            },
-          ],
-        });
-      } else if (isUser.email === dto.email) {
-        throw new DomainException({
-          status: HttpStatus.BAD_REQUEST,
-          errorsMessages: [
-            {
-              message: 'Email already exists',
-              field: 'email',
-            },
-          ],
-        });
-      }
-    }
-
-    await this.usersExternalRepository.createUser(newUser);
-
-    try {
-      await this.emailAdapter.sendEmail(
-        dto.email,
-        randomUUID,
-        emailExamples.registrationEmail,
-      );
-    } catch (e) {
-      console.log(e);
-    }
-
-    return newUser;
-  }
-
-  async confirmEmail(code: string) {
-    const user: UserDocument | null =
-      await this.usersExternalRepository.findUserByCode(code);
-
-    if (!user) {
-      throw new DomainException({
-        status: HttpStatus.BAD_REQUEST,
-        errorsMessages: [
-          {
-            message: 'Invalid confirmation code',
-            field: 'code',
-          },
-        ],
-      });
-    }
-
-    if (user.emailConfirmation.isConfirmed) {
-      throw new DomainException({
-        status: HttpStatus.BAD_REQUEST,
-        errorsMessages: [
-          {
-            message: 'Email already confirmed',
-            field: 'code',
-          },
-        ],
-      });
-    }
-
-    if (user.emailConfirmation.expirationDate < new Date()) {
-      throw new DomainException({
-        status: HttpStatus.BAD_REQUEST,
-        errorsMessages: [
-          {
-            message: 'Confirmation code expired',
-            field: 'code',
-          },
-        ],
-      });
-    }
-
-    user.confirmEmail();
-
-    await this.usersExternalRepository.save(user);
-  }
 
   async resendEmail(email: string) {
     const newExpiration: Date = add(new Date(), { hours: 1, minutes: 30 });
@@ -175,43 +68,6 @@ export class AuthService {
     } catch (e) {
       console.log(e);
     }
-  }
-
-  async login(dto: LoginDto): Promise<AccessAndRefreshTokensType> {
-    const user: UserDocument =
-      await this.usersExternalRepository.findByLoginOrEmail(dto.loginOrEmail);
-
-    const deviceId: string = randomUUID();
-
-    const isValidatePassword: boolean = await this.hashAdapter.compare(
-      user.password,
-      dto.password,
-    );
-
-    if (!isValidatePassword) {
-      throw new DomainException({
-        status: HttpStatus.UNAUTHORIZED,
-        errorsMessages: [
-          {
-            message: 'Invalid login or password',
-            field: 'user',
-          },
-        ],
-      });
-    }
-
-    const accessToken: string = await this.jwtAdapter.createAccessToken(
-      user._id.toString(),
-    );
-    const refreshToken: string = await this.jwtAdapter.createRefreshToken(
-      user._id.toString(),
-      deviceId,
-    );
-
-    return {
-      accessToken,
-      refreshToken,
-    };
   }
 
   async refreshToken(payload: JwtPayload): Promise<AccessAndRefreshTokensType> {
