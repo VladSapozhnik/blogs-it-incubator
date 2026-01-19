@@ -39,6 +39,12 @@ export class SecurityDevicesRepository {
     return result.matchedCount === 1;
   }
 
+  async save(session: SecurityDeviceDocument): Promise<string> {
+    await session.save();
+
+    return session._id.toString();
+  }
+
   async findDeviceSessionByUserIdAndDeviceId(
     userId: string,
     deviceId: string,

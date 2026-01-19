@@ -4,3 +4,10 @@ export type JwtPayload = {
   iat?: number;
   exp?: number;
 };
+
+export type JwtRefreshPayload = {
+  userId: string;
+  deviceId: string;
+  iat: number;
+  exp: number;
+};

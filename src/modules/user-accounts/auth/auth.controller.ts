@@ -7,8 +7,9 @@ import {
   HttpStatus,
   UseGuards,
   Res,
+  Req,
 } from '@nestjs/common';
-import { AuthService } from './auth.service';
+import { type Request } from 'express';
 import { LoginDto } from './dto/login.dto';
 import { CookieAdapter } from '../../../core/adapters/cookie.adapter';
 import { type Response } from 'express';
@@ -29,6 +30,9 @@ import { ConfirmEmailCommand } from './application/usecases/confirm-email.usecas
 import { NewPasswordCommand } from './application/usecases/new-password.usecase';
 import { PasswordRecoveryCommand } from './application/usecases/password-recovery.usecase';
 import { ResendEmailCommand } from './application/usecases/resend-email.usecase';
+import { RefreshAuthGuard } from './guards/refresh-token.guard';
+import { type JwtRefreshPayload } from '../../../core/types/jwt-payload.type';
+import { RefreshTokenCommand } from './application/usecases/refresh-token.usecase';
 
 @Controller('auth')
 export class AuthController {
@@ -102,5 +106,20 @@ export class AuthController {
   @Get('me')
   async profile(@User('userId') userId: string): Promise<ProfileMapper> {
     return this.userQueryExternalRepository.getProfile(userId);
+  }
+
+  @UseGuards(RefreshAuthGuard)
+  @Post('refresh-token')
+  async refreshToken(
+    @Req() req: Request,
+    @User() user: JwtRefreshPayload,
+  ): Promise<AccessAndRefreshTokensType> {
+    const clientIp: string = req.ip ?? 'unknown';
+    const userAgentString: string = req.headers['user-agent'] ?? 'unknown';
+
+    return this.commandBus.execute<
+      RefreshTokenCommand,
+      AccessAndRefreshTokensType
+    >(new RefreshTokenCommand(user, clientIp, userAgentString));
   }
 }

@@ -15,6 +15,18 @@ export class SecurityDevice {
   lastActiveDate: Date;
   @Prop({ required: true })
   expiresAt: Date;
+
+  updateSession(
+    ip: string,
+    title: string,
+    lastActiveDate: Date,
+    expiresAt: Date,
+  ) {
+    this.ip = ip;
+    this.title = title;
+    this.lastActiveDate = lastActiveDate;
+    this.expiresAt = expiresAt;
+  }
 }
 
 export const SecurityDeviceSchema =

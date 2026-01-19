@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { JwtRefreshPayload } from '../types/jwt-payload.type';
 
 @Injectable()
 export class JwtAdapter {
@@ -32,7 +33,9 @@ export class JwtAdapter {
   //     return null;
   //   }
   // }
-  // verifyRefreshToken(token: string) {
-  //   return verify(token, this.jwt_refresh_secret_key);
-  // }
+  async verifyRefreshToken(token: string): Promise<JwtRefreshPayload> {
+    return this.jwtService.verifyAsync(token, {
+      secret: this.jwt_refresh_secret_key,
+    });
+  }
 }
