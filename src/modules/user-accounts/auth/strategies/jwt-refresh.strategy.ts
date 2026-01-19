@@ -1,8 +1,8 @@
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
+import { Request } from 'express';
+import { Injectable } from '@nestjs/common';
 import { JwtPayload } from '../../../../core/types/jwt-payload.type';
-import { HttpStatus, Injectable } from '@nestjs/common';
-import { DomainException } from '../../../../core/exceptions/domain-exceptions';
 
 @Injectable()
 export class JwtRefreshStrategy extends PassportStrategy(
@@ -11,25 +11,21 @@ export class JwtRefreshStrategy extends PassportStrategy(
 ) {
   constructor() {
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(), // Bearer <token>
-      ignoreExpiration: false,
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        (request: Request): string | null => {
+          const data = request?.cookies?.refreshToken as unknown;
+          if (typeof data === 'string') {
+            return data;
+          }
+          return null;
+        },
+      ]),
       secretOrKey: process.env.JWT_REFRESH_SECRET || 'refreshSecret',
+      passReqToCallback: true,
     });
   }
 
-  validate(payload: JwtPayload): JwtPayload {
-    if (!payload.userId || !payload.deviceId) {
-      throw new DomainException({
-        status: HttpStatus.UNAUTHORIZED,
-        errorsMessages: [
-          {
-            message: 'Unauthorized',
-            field: 'user',
-          },
-        ],
-      });
-    }
-
+  validate(req: Request, payload: JwtPayload): JwtPayload {
     return payload;
   }
 }
