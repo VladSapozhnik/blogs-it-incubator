@@ -16,6 +16,26 @@ export class SecurityDevice {
   @Prop({ required: true })
   expiresAt: Date;
 
+  static createInstance(
+    userId: Types.ObjectId,
+    deviceId: string,
+    ip: string,
+    title: string,
+    lastActiveDate: Date,
+    expiresAt: Date,
+  ): SecurityDeviceDocument {
+    const session = new this();
+
+    session.userId = userId;
+    session.deviceId = deviceId;
+    session.ip = ip;
+    session.title = title;
+    session.lastActiveDate = lastActiveDate;
+    session.expiresAt = expiresAt;
+
+    return session as SecurityDeviceDocument;
+  }
+
   updateSession(
     ip: string,
     title: string,

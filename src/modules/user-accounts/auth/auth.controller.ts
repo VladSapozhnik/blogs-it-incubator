@@ -9,10 +9,9 @@ import {
   Res,
   Req,
 } from '@nestjs/common';
-import { type Request } from 'express';
 import { LoginDto } from './dto/login.dto';
 import { CookieAdapter } from '../../../core/adapters/cookie.adapter';
-import { type Response } from 'express';
+import { type Response, type Request } from 'express';
 import { PasswordRecoveryDto } from './dto/password-recovery.dto';
 import { NewPasswordDto } from './dto/new-password.dto';
 import { RegistrationConfirmationCodeDto } from './dto/registration-confirmation-code.dto';
@@ -33,6 +32,7 @@ import { ResendEmailCommand } from './application/usecases/resend-email.usecase'
 import { RefreshAuthGuard } from './guards/refresh-token.guard';
 import { type JwtRefreshPayload } from '../../../core/types/jwt-payload.type';
 import { RefreshTokenCommand } from './application/usecases/refresh-token.usecase';
+import { AccessTokenType } from './types/access-token.type';
 
 @Controller('auth')
 export class AuthController {
@@ -45,13 +45,17 @@ export class AuthController {
   @Post('login')
   @HttpCode(HttpStatus.OK)
   async login(
+    @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
     @Body() loginDto: LoginDto,
-  ): Promise<{ accessToken: string }> {
+  ): Promise<AccessTokenType> {
+    const clientIp: string = req.ip ?? 'unknown';
+    const userAgentString: string = req.headers['user-agent'] ?? 'unknown';
+
     const { accessToken, refreshToken } = await this.commandBus.execute<
       LoginCommand,
       AccessAndRefreshTokensType
-    >(new LoginCommand(loginDto));
+    >(new LoginCommand(loginDto, clientIp, userAgentString));
 
     this.cookieAdapter.setRefreshCookie(res, refreshToken);
 
@@ -112,14 +116,22 @@ export class AuthController {
   @Post('refresh-token')
   async refreshToken(
     @Req() req: Request,
-    @User() user: JwtRefreshPayload,
-  ): Promise<AccessAndRefreshTokensType> {
+    @Res({ passthrough: true }) res: Response,
+    @User()
+    user: JwtRefreshPayload,
+  ): Promise<AccessTokenType> {
     const clientIp: string = req.ip ?? 'unknown';
     const userAgentString: string = req.headers['user-agent'] ?? 'unknown';
 
-    return this.commandBus.execute<
+    const { accessToken, refreshToken } = await this.commandBus.execute<
       RefreshTokenCommand,
       AccessAndRefreshTokensType
     >(new RefreshTokenCommand(user, clientIp, userAgentString));
+
+    this.cookieAdapter.setRefreshCookie(res, refreshToken);
+
+    return {
+      accessToken,
+    };
   }
 }
