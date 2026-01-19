@@ -58,9 +58,6 @@ export class RemoveDeviceSessionUseCase implements ICommandHandler<RemoveDeviceS
       });
     }
 
-    await this.securityDevicesRepository.removeDeviceSession(
-      findDeviceId.userId.toString(),
-      deviceId,
-    );
+    await this.securityDevicesRepository.removeDeviceSession(findDeviceId);
   }
 }

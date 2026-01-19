@@ -63,16 +63,10 @@ export class SecurityDevicesRepository {
     });
   }
 
-  async removeDeviceSession(
-    userId: string,
-    deviceId: string,
-  ): Promise<boolean> {
-    const result: DeleteResult = await this.SecurityDeviceModel.deleteOne({
-      userId: new Types.ObjectId(userId),
-      deviceId,
-    });
+  async removeDeviceSession(session: SecurityDeviceDocument): Promise<string> {
+    await session.deleteOne();
 
-    return result.deletedCount === 1;
+    return session._id.toString();
   }
 
   async removeOtherDeviceSession(

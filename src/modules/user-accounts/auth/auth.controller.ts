@@ -33,6 +33,7 @@ import { RefreshAuthGuard } from './guards/refresh-token.guard';
 import { type JwtRefreshPayload } from '../../../core/types/jwt-payload.type';
 import { RefreshTokenCommand } from './application/usecases/refresh-token.usecase';
 import { AccessTokenType } from './types/access-token.type';
+import { LogOutCommand } from './application/usecases/logout.usecase';
 
 @Controller('auth')
 export class AuthController {
@@ -133,5 +134,12 @@ export class AuthController {
     return {
       accessToken,
     };
+  }
+
+  @UseGuards(RefreshAuthGuard)
+  @Post('logout')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async logout(@User() user: JwtRefreshPayload): Promise<void> {
+    await this.commandBus.execute(new LogOutCommand(user));
   }
 }

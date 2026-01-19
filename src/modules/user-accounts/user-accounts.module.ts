@@ -45,6 +45,7 @@ import { SecurityDevicesRepository } from './security-devices/repositories/secur
 import { SecurityDevicesQueryRepository } from './security-devices/repositories/security-devices.query.repository';
 import { SecurityDevicesService } from './security-devices/security-devices.service';
 import { SecurityDevicesController } from './security-devices/security-devices.controller';
+import { LogoutUseCase } from './auth/application/usecases/logout.usecase';
 
 const useCases = [
   RegistrationUseCase,
@@ -57,6 +58,7 @@ const useCases = [
   RemoveDeviceSessionUseCase,
   RemoveOtherDeviceSessionUseCase,
   GetDeviceSessionByUserIdQueryHandler,
+  LogoutUseCase,
 ];
 
 @Module({
