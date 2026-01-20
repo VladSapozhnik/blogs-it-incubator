@@ -121,6 +121,7 @@ export class AuthController {
   }
 
   @UseGuards(RefreshAuthGuard)
+  @HttpCode(HttpStatus.OK)
   @Post('refresh-token')
   async refreshToken(
     @Req() req: Request,
