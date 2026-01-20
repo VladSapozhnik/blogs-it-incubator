@@ -5,8 +5,8 @@ import { RemoveOtherDeviceSessionCommand } from './application/usecase/remove-ot
 import { RemoveDeviceSessionCommand } from './application/usecase/remove-device-session.usecase';
 import { User } from '../auth/decorator/user.decorator';
 import { type JwtPayload } from '../../../core/types/jwt-payload.type';
-import { SecurityDeviceDocument } from './entities/security-device.entity';
 import { RefreshAuthGuard } from '../auth/guards/refresh-token.guard';
+import { SecurityDevicesMapper } from './mappers/security-devices.mapper';
 
 @UseGuards(RefreshAuthGuard)
 @Controller('security/devices')
@@ -17,10 +17,10 @@ export class SecurityDevicesController {
   ) {}
 
   @Get()
-  getUserDevices(@User() user: JwtPayload) {
+  getUserDevices(@User() user: JwtPayload): Promise<SecurityDevicesMapper[]> {
     return this.queryBus.execute<
       GetSecurityDeviceByUserIdQuery,
-      SecurityDeviceDocument
+      SecurityDevicesMapper[]
     >(new GetSecurityDeviceByUserIdQuery(user.userId));
   }
 

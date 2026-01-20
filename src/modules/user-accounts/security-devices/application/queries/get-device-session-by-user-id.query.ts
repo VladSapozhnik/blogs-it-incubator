@@ -1,6 +1,6 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { SecurityDevicesQueryRepository } from '../../repositories/security-devices.query.repository';
-import { type SecurityDeviceDocument } from '../../entities/security-device.entity';
+import { SecurityDevicesMapper } from '../../mappers/security-devices.mapper';
 
 export class GetSecurityDeviceByUserIdQuery {
   constructor(public readonly userId: string) {}
@@ -14,7 +14,7 @@ export class GetDeviceSessionByUserIdQueryHandler implements IQueryHandler<GetSe
 
   async execute({
     userId,
-  }: GetSecurityDeviceByUserIdQuery): Promise<SecurityDeviceDocument[]> {
+  }: GetSecurityDeviceByUserIdQuery): Promise<SecurityDevicesMapper[]> {
     return this.securityDevicesQueryRepository.findDeviceSessionByUserId(
       userId,
     );

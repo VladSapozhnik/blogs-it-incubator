@@ -6,10 +6,6 @@ import { UsersService } from './users/services/users.service';
 import { UsersRepository } from './users/repositories/users.repository';
 import { UsersQueryRepository } from './users/repositories/users.query.repository';
 import {
-  RateLimit,
-  RateLimitSchema,
-} from './rate-limit/entities/rate-limit.entity';
-import {
   PasswordRecovery,
   PasswordRecoverySchema,
 } from './password-recovery/entities/password-recovery.entity';
@@ -66,7 +62,6 @@ const useCases = [
     PassportModule,
     MongooseModule.forFeature([
       { name: User.name, schema: UserSchema },
-      { name: RateLimit.name, schema: RateLimitSchema },
       { name: PasswordRecovery.name, schema: PasswordRecoverySchema },
       { name: SecurityDevice.name, schema: SecurityDeviceSchema },
     ]),
