@@ -3,13 +3,13 @@ import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { GetSecurityDeviceByUserIdQuery } from './application/queries/get-device-session-by-user-id.query';
 import { RemoveOtherDeviceSessionCommand } from './application/usecase/remove-other-device-session.usecase';
 import { RemoveDeviceSessionCommand } from './application/usecase/remove-device-session.usecase';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { User } from '../auth/decorator/user.decorator';
 import { type JwtPayload } from '../../../core/types/jwt-payload.type';
 import { SecurityDeviceDocument } from './entities/security-device.entity';
+import { RefreshAuthGuard } from '../auth/guards/refresh-token.guard';
 
-@UseGuards(JwtAuthGuard)
-@Controller('security-devices')
+@UseGuards(RefreshAuthGuard)
+@Controller('security/devices')
 export class SecurityDevicesController {
   constructor(
     private readonly queryBus: QueryBus,
