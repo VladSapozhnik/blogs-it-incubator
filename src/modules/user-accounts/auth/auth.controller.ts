@@ -34,6 +34,7 @@ import { type JwtRefreshPayload } from '../../../core/types/jwt-payload.type';
 import { RefreshTokenCommand } from './application/usecases/refresh-token.usecase';
 import { AccessTokenType } from './types/access-token.type';
 import { LogOutCommand } from './application/usecases/logout.usecase';
+import { IpThrottlerGuard } from '../../../core/guards/Ip-throttler.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -43,6 +44,7 @@ export class AuthController {
     private readonly userQueryExternalRepository: UsersQueryExternalRepository,
   ) {}
 
+  @UseGuards(IpThrottlerGuard)
   @Post('login')
   @HttpCode(HttpStatus.OK)
   async login(
@@ -65,6 +67,7 @@ export class AuthController {
     };
   }
 
+  @UseGuards(IpThrottlerGuard)
   @Post('password-recovery')
   @HttpCode(HttpStatus.NO_CONTENT)
   async passwordRecovery(@Body() passwordRecoveryDto: PasswordRecoveryDto) {
@@ -73,6 +76,7 @@ export class AuthController {
     );
   }
 
+  @UseGuards(IpThrottlerGuard)
   @Post('new-password')
   @HttpCode(HttpStatus.NO_CONTENT)
   async newPassword(@Body() newPasswordDto: NewPasswordDto) {
@@ -81,6 +85,7 @@ export class AuthController {
     );
   }
 
+  @UseGuards(IpThrottlerGuard)
   @Post('registration-confirmation')
   @HttpCode(HttpStatus.NO_CONTENT)
   async registrationConfirmation(@Body() dto: RegistrationConfirmationCodeDto) {
@@ -89,6 +94,7 @@ export class AuthController {
     );
   }
 
+  @UseGuards(IpThrottlerGuard)
   @Post('registration')
   @HttpCode(HttpStatus.NO_CONTENT)
   async create(@Body() registrationDto: RegistrationDto) {
@@ -97,6 +103,7 @@ export class AuthController {
     );
   }
 
+  @UseGuards(IpThrottlerGuard)
   @Post('registration-email-resending')
   @HttpCode(HttpStatus.NO_CONTENT)
   async registrationEmailResending(

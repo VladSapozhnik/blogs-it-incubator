@@ -16,13 +16,13 @@ export class JwtAdapter {
   async createAccessToken(userId: string): Promise<string> {
     return this.jwtService.signAsync(
       { userId: userId.toString() },
-      { secret: this.jwt_secret_key, expiresIn: '7m' },
+      { secret: this.jwt_secret_key, expiresIn: '10s' },
     );
   }
   async createRefreshToken(userId: string, deviceId: string): Promise<string> {
     return this.jwtService.signAsync(
       { userId: userId.toString(), deviceId: deviceId },
-      { secret: this.jwt_refresh_secret_key, expiresIn: '30m' },
+      { secret: this.jwt_refresh_secret_key, expiresIn: '20s' },
     );
   }
   // verifyAccessToken(jwtToken: string): string | null {
