@@ -11,7 +11,6 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UsersQueryRepository } from './repositories/users.query.repository';
 import { GetUsersQueryParamsDto } from './dto/users-query-input.dto';
 import { UsersMapper } from './mappers/users.mapper';
 import { PaginatedViewDto } from '../../../core/dto/base.paginated.view.dto';
@@ -27,7 +26,6 @@ export class UsersController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
-    private readonly usersQueryRepository: UsersQueryRepository,
   ) {}
 
   @Post()

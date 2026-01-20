@@ -39,7 +39,7 @@ import { RemoveOtherDeviceSessionUseCase } from './security-devices/application/
 import { GetDeviceSessionByUserIdQueryHandler } from './security-devices/application/queries/get-device-session-by-user-id.query';
 import { SecurityDevicesRepository } from './security-devices/repositories/security-devices.repository';
 import { SecurityDevicesQueryRepository } from './security-devices/repositories/security-devices.query.repository';
-import { SecurityDevicesService } from './security-devices/security-devices.service';
+import { SecurityDevicesService } from './security-devices/application/security-devices.service';
 import { SecurityDevicesController } from './security-devices/security-devices.controller';
 import { LogoutUseCase } from './auth/application/usecases/logout.usecase';
 import { CreateUserUseCase } from './users/application/usecases/create-user.usecase';
