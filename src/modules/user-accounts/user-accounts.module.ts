@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from './users/entities/user.entity';
 import { UsersController } from './users/users.controller';
-import { UsersService } from './users/services/users.service';
+import { UsersService } from './users/application/users.service';
 import { UsersRepository } from './users/repositories/users.repository';
 import { UsersQueryRepository } from './users/repositories/users.query.repository';
 import {
@@ -42,6 +42,10 @@ import { SecurityDevicesQueryRepository } from './security-devices/repositories/
 import { SecurityDevicesService } from './security-devices/security-devices.service';
 import { SecurityDevicesController } from './security-devices/security-devices.controller';
 import { LogoutUseCase } from './auth/application/usecases/logout.usecase';
+import { CreateUserUseCase } from './users/application/usecases/create-user.usecase';
+import { RemoveUserUseCase } from './users/application/usecases/remove-user.usecase';
+import { GetUsersQueryHandler } from './users/application/queries/get-users.query';
+import { GetUserByIdQueryHandler } from './users/application/queries/get-user-by-id.query';
 
 const useCases = [
   RegistrationUseCase,
@@ -55,6 +59,10 @@ const useCases = [
   RemoveOtherDeviceSessionUseCase,
   GetDeviceSessionByUserIdQueryHandler,
   LogoutUseCase,
+  CreateUserUseCase,
+  RemoveUserUseCase,
+  GetUsersQueryHandler,
+  GetUserByIdQueryHandler,
 ];
 
 @Module({

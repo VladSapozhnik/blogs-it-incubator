@@ -1,23 +1,27 @@
-import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from '../dto/create-user.dto';
-import { UsersRepository } from '../repositories/users.repository';
 import {
   User,
   UserDocument,
   type UserModelType,
-} from '../entities/user.entity';
+} from '../../entities/user.entity';
+import { UsersRepository } from '../../repositories/users.repository';
+import { HashAdapter } from '../../../../../core/adapters/hash.adapter';
 import { InjectModel } from '@nestjs/mongoose';
-import { HashAdapter } from '../../../../core/adapters/hash.adapter';
+import { CreateUserDto } from '../../dto/create-user.dto';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
-@Injectable()
-export class UsersService {
+export class CreateUserCommand {
+  constructor(public readonly dto: CreateUserDto) {}
+}
+
+@CommandHandler(CreateUserCommand)
+export class CreateUserUseCase implements ICommandHandler<CreateUserCommand> {
   constructor(
     @InjectModel(User.name) private readonly UserModel: UserModelType,
     private readonly usersRepository: UsersRepository,
     private readonly hashAdapter: HashAdapter,
   ) {}
 
-  async createUser(dto: CreateUserDto): Promise<string> {
+  async execute({ dto }: CreateUserCommand): Promise<string> {
     await this.usersRepository.findByLoginOrEmail(dto.login, dto.email);
 
     const hash: string = await this.hashAdapter.hashPassword(dto.password);
@@ -29,11 +33,5 @@ export class UsersService {
     });
 
     return this.usersRepository.createUser(newUser);
-  }
-
-  async removeUser(id: string) {
-    const existUser: UserDocument = await this.usersRepository.getUserById(id);
-
-    await this.usersRepository.removeUser(existUser);
   }
 }
