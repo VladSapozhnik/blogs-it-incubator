@@ -1,7 +1,7 @@
 import { HydratedDocument, Model, Types } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
-@Schema({ timestamps: true })
+@Schema({ timestamps: true, collection: 'security_devices' })
 export class SecurityDevice {
   @Prop({ required: true })
   userId: Types.ObjectId;

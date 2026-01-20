@@ -5,7 +5,7 @@ import { randomUUID } from 'node:crypto';
 import { HttpStatus } from '@nestjs/common';
 import { DomainException } from '../../../../core/exceptions/domain-exceptions';
 
-@Schema()
+@Schema({ collection: 'password_recovery' })
 export class PasswordRecovery {
   @Prop({ required: true })
   userId: Types.ObjectId;
