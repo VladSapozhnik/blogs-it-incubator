@@ -1,4 +1,12 @@
-import { Controller, Get, Param, Delete, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  Delete,
+  UseGuards,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { GetSecurityDeviceByUserIdQuery } from './application/queries/get-device-session-by-user-id.query';
 import { RemoveOtherDeviceSessionCommand } from './application/usecase/remove-other-device-session.usecase';
@@ -25,6 +33,7 @@ export class SecurityDevicesController {
   }
 
   @Delete(':deviceId')
+  @HttpCode(HttpStatus.NO_CONTENT)
   removeDeviceSession(
     @User() user: JwtPayload,
     @Param('deviceId') deviceId: string,
@@ -35,6 +44,7 @@ export class SecurityDevicesController {
   }
 
   @Delete()
+  @HttpCode(HttpStatus.NO_CONTENT)
   removeOtherSessions(@User() user: JwtPayload) {
     return this.commandBus.execute<RemoveOtherDeviceSessionCommand, void>(
       new RemoveOtherDeviceSessionCommand(user),
