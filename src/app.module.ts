@@ -6,6 +6,9 @@ import { UserAccountsModule } from './modules/user-accounts/user-accounts.module
 import { BloggersPlatformModule } from './modules/bloggers-platform/bloggers-platform.module';
 import { CqrsModule } from '@nestjs/cqrs';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { CoreModule } from './core/core.module';
+import { CoreConfig } from './core/core.config';
+import { TestingModule } from './modules/testing/testing.module';
 
 @Module({
   imports: [
@@ -19,12 +22,18 @@ import { ThrottlerModule } from '@nestjs/throttler';
       ],
     }),
     CqrsModule.forRoot(),
-    MongooseModule.forRoot(
-      process.env.MONGODB_URI ||
-        'mongodb://localhost:27017/blog-nest-it-incubator',
-    ),
+    MongooseModule.forRootAsync({
+      useFactory: (config: CoreConfig) => {
+        return {
+          uri: config.mongoURI,
+        };
+      },
+      inject: [CoreConfig],
+    }),
     BloggersPlatformModule,
     UserAccountsModule,
+    CoreModule,
+    TestingModule,
   ],
   controllers: [AppController],
 })
