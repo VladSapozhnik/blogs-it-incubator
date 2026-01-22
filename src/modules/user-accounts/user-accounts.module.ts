@@ -10,7 +10,7 @@ import {
   PasswordRecoverySchema,
 } from './password-recovery/entities/password-recovery.entity';
 import { AuthController } from './auth/auth.controller';
-import { AuthService } from './auth/auth.service';
+import { AuthService } from './auth/application/auth.service';
 import { PasswordRecoveryExternalRepository } from './password-recovery/password-recovery.external.repository';
 import { EmailAdapter } from '../../core/adapters/email.adapter';
 import { HashAdapter } from '../../core/adapters/hash.adapter';
@@ -18,7 +18,7 @@ import { JwtAdapter } from '../../core/adapters/jwt.adapter';
 import { CookieAdapter } from '../../core/adapters/cookie.adapter';
 import { UsersExternalRepository } from './users/repositories/users.external.repository';
 import { PassportModule } from '@nestjs/passport';
-import { JwtService } from '@nestjs/jwt';
+import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './auth/strategies/jwt.strategy';
 import { SuperAdminStrategy } from './users/strategies/super-admin.strategy';
 import { UsersQueryExternalRepository } from './users/repositories/users.query.external.repository';
@@ -67,6 +67,7 @@ const useCases = [
 
 @Module({
   imports: [
+    JwtModule.register({}),
     PassportModule,
     MongooseModule.forFeature([
       { name: User.name, schema: UserSchema },
@@ -77,7 +78,6 @@ const useCases = [
   controllers: [UsersController, AuthController, SecurityDevicesController],
   providers: [
     ...useCases,
-    JwtService,
     UsersService,
     UsersRepository,
     UsersExternalRepository,

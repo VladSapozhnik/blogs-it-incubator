@@ -16,6 +16,6 @@ async function bootstrap() {
 
   appSetup(app);
 
-  await app.listen(coreConfig.port ?? 3005);
+  await app.listen(coreConfig.port);
 }
 bootstrap();

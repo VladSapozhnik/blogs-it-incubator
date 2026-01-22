@@ -1,29 +1,69 @@
-import { Injectable } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import { HttpStatus, Injectable } from '@nestjs/common';
+import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import { JwtRefreshPayload } from '../types/jwt-payload.type';
+import { CoreConfig } from '../core.config';
+import { DomainException } from '../exceptions/domain-exceptions';
 
 @Injectable()
 export class JwtAdapter {
   private readonly jwt_secret_key: string;
   private readonly jwt_refresh_secret_key: string;
+  private readonly jwt_expires_in: string;
+  private readonly jwt_refresh_expires_in: string;
 
-  constructor(private readonly jwtService: JwtService) {
-    this.jwt_secret_key = process.env.JWT_SECRET_KEY || 'jwtSecret';
-    this.jwt_refresh_secret_key =
-      process.env.JWT_REFERSH_SECRET_KEY || 'refreshSecret';
+  constructor(
+    private readonly jwtService: JwtService,
+    private readonly coreConfig: CoreConfig,
+  ) {
+    this.jwt_secret_key = coreConfig.jwt_secret;
+    this.jwt_refresh_secret_key = coreConfig.jwtRefreshSecret;
+    this.jwt_expires_in = coreConfig.accessTokenExpires;
+    this.jwt_refresh_expires_in = coreConfig.refreshTokenExpires;
   }
 
   async createAccessToken(userId: string): Promise<string> {
-    return this.jwtService.signAsync(
-      { userId: userId.toString() },
-      { secret: this.jwt_secret_key, expiresIn: '10s' },
-    );
+    try {
+      return this.jwtService.signAsync(
+        {
+          userId: userId.toString(),
+        },
+        {
+          secret: this.jwt_secret_key,
+          expiresIn: this.jwt_expires_in as JwtSignOptions['expiresIn'],
+        },
+      );
+    } catch {
+      throw new DomainException({
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        errorsMessages: [
+          {
+            message: 'Token generation failed',
+            field: 'token',
+          },
+        ],
+      });
+    }
   }
   async createRefreshToken(userId: string, deviceId: string): Promise<string> {
-    return this.jwtService.signAsync(
-      { userId: userId.toString(), deviceId: deviceId },
-      { secret: this.jwt_refresh_secret_key, expiresIn: '20s' },
-    );
+    try {
+      return this.jwtService.signAsync(
+        { userId: userId.toString(), deviceId: deviceId },
+        {
+          secret: this.jwt_refresh_secret_key,
+          expiresIn: this.jwt_refresh_expires_in as JwtSignOptions['expiresIn'],
+        },
+      );
+    } catch {
+      throw new DomainException({
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        errorsMessages: [
+          {
+            message: 'Token generation failed',
+            field: 'refresh token',
+          },
+        ],
+      });
+    }
   }
   // verifyAccessToken(jwtToken: string): string | null {
   //   try {
@@ -34,8 +74,20 @@ export class JwtAdapter {
   //   }
   // }
   async verifyRefreshToken(token: string): Promise<JwtRefreshPayload> {
-    return this.jwtService.verifyAsync(token, {
-      secret: this.jwt_refresh_secret_key,
-    });
+    try {
+      return this.jwtService.verifyAsync(token, {
+        secret: this.jwt_refresh_secret_key,
+      });
+    } catch {
+      throw new DomainException({
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        errorsMessages: [
+          {
+            message: 'Token verify failed',
+            field: 'refresh token',
+          },
+        ],
+      });
+    }
   }
 }

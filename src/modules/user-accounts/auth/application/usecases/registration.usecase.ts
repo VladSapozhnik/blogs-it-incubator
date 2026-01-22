@@ -14,6 +14,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { UsersExternalRepository } from '../../../users/repositories/users.external.repository';
 import { EmailAdapter } from '../../../../../core/adapters/email.adapter';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { CoreConfig } from '../../../../../core/core.config';
 
 export class RegistrationCommand {
   constructor(public readonly dto: RegistrationDto) {}
@@ -26,6 +27,7 @@ export class RegistrationUseCase implements ICommandHandler<RegistrationCommand>
     private readonly hashAdapter: HashAdapter,
     private readonly usersExternalRepository: UsersExternalRepository,
     private readonly emailAdapter: EmailAdapter,
+    private readonly coreConfig: CoreConfig,
   ) {}
 
   async execute({ dto }: RegistrationCommand): Promise<void> {
@@ -69,7 +71,7 @@ export class RegistrationUseCase implements ICommandHandler<RegistrationCommand>
         hours: 1,
         minutes: 30,
       }),
-      isConfirmed: false,
+      isConfirmed: this.coreConfig.isUserConfirm,
     });
 
     await this.usersExternalRepository.save(newUser);

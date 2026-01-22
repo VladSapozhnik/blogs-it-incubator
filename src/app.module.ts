@@ -13,19 +13,25 @@ import { TestingModule } from './modules/testing/testing.module';
 @Module({
   imports: [
     configModule,
-    ThrottlerModule.forRoot({
-      throttlers: [
-        {
-          ttl: 10000,
-          limit: 5,
-        },
-      ],
+    ThrottlerModule.forRootAsync({
+      useFactory: (coreConfig: CoreConfig) => {
+        return {
+          disabled: !coreConfig.isThrottleEnabled,
+          throttlers: [
+            {
+              ttl: coreConfig.throttleTtl,
+              limit: coreConfig.throttleLimit,
+            },
+          ],
+        };
+      },
+      inject: [CoreConfig],
     }),
     CqrsModule.forRoot(),
     MongooseModule.forRootAsync({
-      useFactory: (config: CoreConfig) => {
+      useFactory: (coreConfig: CoreConfig) => {
         return {
-          uri: config.mongoURI,
+          uri: coreConfig.mongoURI,
         };
       },
       inject: [CoreConfig],

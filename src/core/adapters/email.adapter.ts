@@ -1,14 +1,15 @@
 import nodemailer from 'nodemailer';
 import { Injectable } from '@nestjs/common';
+import { CoreConfig } from '../core.config';
 
 @Injectable()
 export class EmailAdapter {
   private readonly user: string;
   private readonly password: string;
 
-  constructor() {
-    this.user = process.env.USER_GMAIL!;
-    this.password = process.env.USER_GMAIL_PASSWORD!;
+  constructor(private readonly coreConfig: CoreConfig) {
+    this.user = coreConfig.userGmail;
+    this.password = coreConfig.userGmailPassword;
   }
 
   async sendEmail(
