@@ -24,7 +24,11 @@ export class CoreConfig {
   @IsNotEmpty({ message: 'Set Env variable MONGO_URI' })
   mongoURI: string;
 
-  @IsEnum(Environments)
+  @IsEnum(Environments, {
+    message:
+      'Ser correct NODE_ENV value, available values: ' +
+      configValidationUtility.getEnumValues(Environments).join(', '),
+  })
   env: string;
 
   @IsNotEmpty({ message: 'Set Env variable JWT_SECRET_KEY' })
