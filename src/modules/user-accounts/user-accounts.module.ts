@@ -46,6 +46,7 @@ import { CreateUserUseCase } from './users/application/usecases/create-user.usec
 import { RemoveUserUseCase } from './users/application/usecases/remove-user.usecase';
 import { GetUsersQueryHandler } from './users/application/queries/get-users.query';
 import { GetUserByIdQueryHandler } from './users/application/queries/get-user-by-id.query';
+import { UserAccountsConfig } from './config/user-accounts.config';
 
 const useCases = [
   RegistrationUseCase,
@@ -77,6 +78,7 @@ const useCases = [
   ],
   controllers: [UsersController, AuthController, SecurityDevicesController],
   providers: [
+    UserAccountsConfig,
     ...useCases,
     UsersService,
     UsersRepository,

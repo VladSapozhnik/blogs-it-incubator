@@ -1,8 +1,8 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import { JwtRefreshPayload } from '../types/jwt-payload.type';
-import { CoreConfig } from '../core.config';
 import { DomainException } from '../exceptions/domain-exceptions';
+import { UserAccountsConfig } from '../../modules/user-accounts/config/user-accounts.config';
 
 @Injectable()
 export class JwtAdapter {
@@ -13,12 +13,12 @@ export class JwtAdapter {
 
   constructor(
     private readonly jwtService: JwtService,
-    private readonly coreConfig: CoreConfig,
+    private readonly userAccountsConfig: UserAccountsConfig,
   ) {
-    this.jwt_secret_key = coreConfig.jwt_secret;
-    this.jwt_refresh_secret_key = coreConfig.jwtRefreshSecret;
-    this.jwt_expires_in = coreConfig.accessTokenExpires;
-    this.jwt_refresh_expires_in = coreConfig.refreshTokenExpires;
+    this.jwt_secret_key = this.userAccountsConfig.jwt_secret;
+    this.jwt_refresh_secret_key = this.userAccountsConfig.jwtRefreshSecret;
+    this.jwt_expires_in = this.userAccountsConfig.accessTokenExpires;
+    this.jwt_refresh_expires_in = this.userAccountsConfig.refreshTokenExpires;
   }
 
   async createAccessToken(userId: string): Promise<string> {

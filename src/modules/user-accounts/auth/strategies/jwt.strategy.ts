@@ -3,14 +3,15 @@ import { PassportStrategy } from '@nestjs/passport';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { JwtPayload } from '../../../../core/types/jwt-payload.type';
 import { DomainException } from '../../../../core/exceptions/domain-exceptions';
+import { UserAccountsConfig } from '../../config/user-accounts.config';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor() {
+  constructor(private readonly userAccountsConfig: UserAccountsConfig) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: process.env.JWT_SECRET_KEY || 'jwtSecret',
+      secretOrKey: userAccountsConfig.jwt_secret,
     });
   }
 
