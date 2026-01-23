@@ -44,7 +44,9 @@ describe('AuthController (e2e)', () => {
   });
 
   afterAll(async () => {
-    await app.close();
+    if (app) {
+      await app.close();
+    }
   });
 
   it('/auth/login (POST) should return access token for valid credentials', async () => {

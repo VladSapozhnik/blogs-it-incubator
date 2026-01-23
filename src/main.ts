@@ -1,18 +1,21 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
 import { appSetup } from './setup/app.setup';
 import cookieParser from 'cookie-parser';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { CoreConfig } from './core/core.config';
+import { initAppModule } from './init-app-module';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  const DynamicAppModule = await initAppModule();
+
+  const app =
+    await NestFactory.create<NestExpressApplication>(DynamicAppModule);
+
+  const coreConfig: CoreConfig = app.get<CoreConfig>(CoreConfig);
 
   app.set('trust proxy', true);
   app.use(cookieParser());
   app.enableCors({});
-
-  const coreConfig: CoreConfig = app.get<CoreConfig>(CoreConfig);
 
   appSetup(app);
 

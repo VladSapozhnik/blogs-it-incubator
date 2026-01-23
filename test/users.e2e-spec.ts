@@ -39,7 +39,9 @@ describe('UserController (e2e)', () => {
   });
 
   afterAll(async () => {
-    await app.close();
+    if (app) {
+      await app.close();
+    }
   });
 
   it('/users (POST) should return 401 when non-admin tries to create a user', async () => {

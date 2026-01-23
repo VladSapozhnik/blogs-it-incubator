@@ -18,6 +18,12 @@ export class CoreConfig {
   @IsNotEmpty({ message: 'Set Env variable MONGO_URI' })
   mongoURI: string;
 
+  @IsBoolean({
+    message:
+      'Set Env variable INCLUDE_TESTING_MODULE, available values: true, false, 0, 1',
+  })
+  includeTestingModule: boolean;
+
   @IsEnum(Environments, {
     message:
       'Ser correct NODE_ENV value, available values: ' +
@@ -43,6 +49,10 @@ export class CoreConfig {
     this.port = Number(this.configService.get('PORT')) || 3005;
 
     this.mongoURI = this.configService.get('MONGODB_URI') as string;
+
+    this.includeTestingModule = configValidationUtility.convertToBoolean(
+      this.configService.get('INCLUDE_TESTING_MODULE') as string,
+    ) as boolean;
 
     this.env = this.configService.get('NODE_ENV') as string;
 

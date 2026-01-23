@@ -1,5 +1,5 @@
 import { configModule } from './dynamic-config-module';
-import { Module } from '@nestjs/common';
+import { DynamicModule, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserAccountsModule } from './modules/user-accounts/user-accounts.module';
@@ -43,4 +43,11 @@ import { TestingModule } from './modules/testing/testing.module';
   ],
   controllers: [AppController],
 })
-export class AppModule {}
+export class AppModule {
+  static forRoot(coreConfig: CoreConfig): DynamicModule {
+    return {
+      module: AppModule,
+      imports: [...(coreConfig.includeTestingModule ? [TestingModule] : [])], // Add dynamic modules here
+    };
+  }
+}
